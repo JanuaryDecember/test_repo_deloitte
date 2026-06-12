@@ -4,7 +4,7 @@ package_manager: maven
 project_name: deloitter
 hints:
   language_family: java
-  team_size: solo
+  team_size: small
   deployment_target: self-host
   ci_provider: github-actions
   ci_default_flow: manual-promotion
