@@ -13,7 +13,7 @@
 | Status | proposed |
 
 ### Dependencies
-- **Blocked by:** `S-03`
+- **Blocked by:** #6
 - **Blocks:** none
 - **Parallel with:** `S-05`
 

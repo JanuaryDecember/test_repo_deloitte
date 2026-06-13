@@ -13,8 +13,8 @@
 | Status | proposed |
 
 ### Dependencies
-- **Blocked by:** `F-01`, `S-02`
-- **Blocks:** `S-04`
+- **Blocked by:** #2, #5
+- **Blocks:** #7
 - **Parallel with:** `S-05`
 
 ### Why / risk

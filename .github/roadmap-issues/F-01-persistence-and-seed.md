@@ -10,11 +10,11 @@
 | Stream | Stream A - Onboarding & access |
 | Type | foundation |
 | PRD refs | Account provisioning note, Data handling NFR, Business Logic |
-| Status | ready |
+| Status | done |
 
 ### Dependencies
 - **Blocked by:** none
-- **Blocks:** `F-02`, `S-01`, `S-02`, `S-03`
+- **Blocks:** #3, #4, #5, #6
 - **Parallel with:** none
 
 ### Why / risk
