@@ -81,7 +81,23 @@ npm run dev
 # App runs on http://localhost:5173
 ```
 
-## 📁 Project Structure
+## � Demo Login Accounts
+
+The app is seeded with test employee accounts. Use any of these credentials to log in:
+
+**Email addresses:**
+
+- `alice.chen@deloitte.demo`
+- `ben.martinez@deloitte.demo`
+- `chloe.patel@deloitte.demo`
+- `daniel.kim@deloitte.demo`
+- `emily.zhang@deloitte.demo`
+
+**Password (all accounts):** `password123`
+
+> **Note:** These are demo accounts only. The app does not support self-registration.
+
+## �📁 Project Structure
 
 - **`backend/`** — Spring Boot REST API (see [`backend/AGENTS.md`](backend/AGENTS.md))
 - **`frontend/`** — React TypeScript SPA/PWA (see [`frontend/AGENTS.md`](frontend/AGENTS.md))
