@@ -35,8 +35,8 @@ Run a structured pre-demo or pre-release verification that confirms the applicat
 | Java available | `java -version` | Java 21+ |
 | Node available | `node -v` | Node 18+ |
 | Maven wrapper executable | `ls -la backend/mvnw` | Has `+x` permission |
-| Docker available | `docker --version` | Responds (needed for local Postgres) |
-| Docker Compose available | `docker compose version` | Responds |
+| Container runtime available | `docker --version` or `podman --version` | Either responds (needed for local Postgres) |
+| Compose available | `docker compose version` or `podman compose version` | Either responds |
 | npm dependencies installed | `ls frontend/node_modules` | Exists and non-empty |
 | Maven dependencies resolved | `backend/target/` or `.m2` cache | Present from recent build |
 
@@ -44,7 +44,9 @@ Run a structured pre-demo or pre-release verification that confirms the applicat
 
 1. **Start database** (if a Docker Compose file exists in `backend/`):
    ```bash
-   cd backend && docker compose up -d
+   # Use whichever container runtime is available:
+   cd backend && docker compose up -d   # Docker users
+   cd backend && podman compose up -d   # Podman users
    ```
    Wait for health check or port 5432 accepting connections. If no Docker Compose file exists yet (pre-F-01), skip and note as a known limitation.
 
@@ -125,7 +127,7 @@ result: <READY | READY_WITH_NOTES | NOT_READY>
 |-------|--------|-------|
 | Java 21+ | ✅/❌ | <version found> |
 | Node 18+ | ✅/❌ | <version found> |
-| Docker | ✅/❌ | <version or "not available"> |
+| Container runtime (Docker or Podman) | ✅/❌ | <version or "not available"> |
 | Maven wrapper | ✅/❌ | <executable yes/no> |
 | npm modules | ✅/❌ | <installed yes/no> |
 
@@ -217,7 +219,7 @@ Focused check: is F-01 specifically working correctly?
 
 | Situation | Action |
 |-----------|--------|
-| Docker not installed/running | Report as blocker; suggest H2 fallback or "start Docker Desktop" |
+| Neither Docker nor Podman installed/running | Report as blocker; suggest H2 fallback or "start Docker Desktop / Podman machine" |
 | Port 8080 already in use | Report which process holds it; suggest `lsof -i :8080` to identify |
 | Frontend build fails (TS errors) | Report the specific errors; mark frontend as NOT_READY |
 | Database connection refused | Check Docker status, verify port mapping, check credentials |
