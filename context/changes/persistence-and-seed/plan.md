@@ -78,46 +78,9 @@ This slice does NOT introduce:
 
 #### Backend
 
-- [ ] Create `backend/src/main/resources/db/migration/V1__create_employee_table.sql`:
-  ```sql
-  CREATE TABLE employee (
-      id            BIGSERIAL PRIMARY KEY,
-      email         VARCHAR(255) NOT NULL UNIQUE,
-      password_hash VARCHAR(255) NOT NULL,
-      first_name    VARCHAR(100) NOT NULL,
-      last_name     VARCHAR(100) NOT NULL,
-      service_line  VARCHAR(100),
-      role_family   VARCHAR(100),
-      contact_info  VARCHAR(255),  -- Teams/email handle for match reveal
-      created_at    TIMESTAMP NOT NULL DEFAULT NOW()
-  );
-  ```
-- [ ] Create `backend/src/main/resources/db/migration/V2__create_catalog_tables.sql`:
-  ```sql
-  CREATE TABLE interest (
-      id   BIGSERIAL PRIMARY KEY,
-      name VARCHAR(100) NOT NULL UNIQUE
-  );
-
-  CREATE TABLE competency (
-      id   BIGSERIAL PRIMARY KEY,
-      name VARCHAR(100) NOT NULL UNIQUE
-  );
-  ```
-- [ ] Create `backend/src/main/resources/db/migration/V3__create_employee_selections.sql`:
-  ```sql
-  CREATE TABLE employee_interest (
-      employee_id BIGINT NOT NULL REFERENCES employee(id),
-      interest_id BIGINT NOT NULL REFERENCES interest(id),
-      PRIMARY KEY (employee_id, interest_id)
-  );
-
-  CREATE TABLE employee_competency (
-      employee_id   BIGINT NOT NULL REFERENCES employee(id),
-      competency_id BIGINT NOT NULL REFERENCES competency(id),
-      PRIMARY KEY (employee_id, competency_id)
-  );
-  ```
+- [x] Create `backend/src/main/resources/db/migration/V1__create_employee_table.sql`
+- [x] Create `backend/src/main/resources/db/migration/V2__create_catalog_tables.sql`
+- [x] Create `backend/src/main/resources/db/migration/V3__create_employee_selections.sql`
 
 #### Frontend
 
@@ -125,7 +88,7 @@ This slice does NOT introduce:
 
 #### Verification
 
-- [ ] Run `.\mvnw.cmd spring-boot:run` — Flyway applies V1, V2, V3 without errors; JPA validation passes (no entity mismatch yet — add `spring.jpa.hibernate.ddl-auto=none` temporarily or allow validate to warn until entities exist in Phase 3).
+- [x] Run `.\mvnw.cmd spring-boot:run` — Flyway applies V1, V2, V3 without errors; JPA validation passes. *(Verified: "Successfully applied 3 migrations to schema public, now at version v3". Deviation: required adding `spring-boot-flyway` dependency — Spring Boot 4.1 extracted FlywayAutoConfiguration into a separate module not present in spring-boot-autoconfigure.)*
 
 ---
 
