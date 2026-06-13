@@ -48,7 +48,7 @@ mv context/changes/<change-id>/ context/archive/<change-id>/
 
 The folder and all its contents (plan.md, plan-brief.md, review/, etc.) move as-is.
 
-After moving, prepend an archive header to both `plan.md` and `plan-brief.md` (if they exist) at the very top of the file, **before** any existing frontmatter or content:
+After moving, prepend an archive header to **all markdown files** in the archived folder (`plan.md`, `plan-brief.md`, and every file under `review/`) at the very top of the file, **before** any existing frontmatter or content:
 
 ```markdown
 > **Archived:** <YYYY-MM-DD> | Change ID: `<change-id>` | Roadmap ID: `<roadmap-id>`

@@ -1,3 +1,5 @@
+> **Archived:** 2026-06-13 | Change ID: `persistence-and-seed` | Roadmap ID: `F-01`
+
 ---
 change_id: "persistence-and-seed"
 phase: 2
