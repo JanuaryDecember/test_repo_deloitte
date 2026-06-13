@@ -38,13 +38,23 @@ This is advisory only — the archive proceeds regardless.
 2. Confirm `context/archive/<change-id>/` does NOT already exist. If it does, error: "Already archived: `context/archive/<change-id>/` exists."
 3. Check for review files (warn if missing, per above).
 
-### Step 2: Move the change folder
+### Step 2: Move the change folder and stamp with archive date
+
+Use today's date (YYYY-MM-DD) as the archive timestamp.
 
 ```bash
 mv context/changes/<change-id>/ context/archive/<change-id>/
 ```
 
 The folder and all its contents (plan.md, plan-brief.md, review/, etc.) move as-is.
+
+After moving, prepend an archive header to both `plan.md` and `plan-brief.md` (if they exist) at the very top of the file, **before** any existing frontmatter or content:
+
+```markdown
+> **Archived:** <YYYY-MM-DD> | Change ID: `<change-id>` | Roadmap ID: `<roadmap-id>`
+```
+
+This line goes at line 1 of each file, followed by a blank line, then the original content.
 
 ### Step 3: Update `context/foundation/roadmap.md`
 

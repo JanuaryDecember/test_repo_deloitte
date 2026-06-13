@@ -1,3 +1,5 @@
+> **Archived:** 2026-06-13 | Change ID: `persistence-and-seed` | Roadmap ID: `F-01`
+
 # Plan Brief: Persistence & seed foundation
 
 **Change ID:** `persistence-and-seed` | **Roadmap ID:** `F-01` | **Status:** revised
