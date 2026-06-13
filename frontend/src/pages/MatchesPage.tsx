@@ -3,17 +3,18 @@ import { useNavigate } from 'react-router';
 import { fetchMatches } from '../api/client';
 import type { MatchItem } from '../types/match';
 import { useMatchCount } from '../contexts/MatchContext';
+import { useAuth } from '../auth/useAuth';
 import { getAccentColor } from '../utils/accentColor';
 import styles from './MatchesPage.module.css';
 
 export function MatchesPage() {
   const navigate = useNavigate();
   const { setMatchCount } = useMatchCount();
+  const { user } = useAuth();
 
   const [matches, setMatches] = useState<MatchItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
   // Increment to trigger a reload (initial load + retry)
   const [fetchKey, setFetchKey] = useState(0);
 
@@ -49,18 +50,13 @@ export function MatchesPage() {
     document.title = 'Deloitter — Matches';
   }, []);
 
-  const showToast = useCallback((msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2000);
-  }, []);
-
-  const handleMessage = useCallback(
-    (handle: string) => {
-      navigator.clipboard.writeText(handle).catch(() => undefined);
-      showToast(`Copied ${handle}`);
-    },
-    [showToast]
-  );
+  const openTeamsChat = useCallback((matchEmail: string) => {
+    const users = user?.email
+      ? `${encodeURIComponent(user.email)},${encodeURIComponent(matchEmail)}`
+      : encodeURIComponent(matchEmail);
+    const url = `https://teams.microsoft.com/l/chat/0/0?users=marroman@deloittece.com`;
+    window.open(url, '_blank');
+  }, [user]);
 
   return (
     <div className={styles.page}>
@@ -155,7 +151,7 @@ export function MatchesPage() {
               <button
                 type="button"
                 className={styles.messageBtn}
-                onClick={() => handleMessage(m.contactInfo)}
+                onClick={() => openTeamsChat(m.contactInfo)}
               >
                 Message on Teams
               </button>
@@ -164,8 +160,6 @@ export function MatchesPage() {
         </div>
       )}
 
-      {/* Toast */}
-      {toast && <div className={styles.toast}>{toast}</div>}
     </div>
   );
 }

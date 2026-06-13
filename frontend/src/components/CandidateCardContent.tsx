@@ -27,7 +27,7 @@ export function CandidateCardContent({ card }: Props) {
         <p className={styles.candidateMeta}>
           {card.roleFamily} · {card.serviceLine}
         </p>
-        <p className={styles.candidateOffice}>📍 {card.contactInfo}</p>
+        <p className={styles.candidateOffice}> {card.contactInfo}</p>
 
         {(card.sharedInterests.length > 0 || card.sharedCompetencies.length > 0) && (
           <>
