@@ -1,1 +1,1 @@
-C:/Users/jprokopski/test_repo_deloitte/frontend/AGENTS.md
+AGENTS.md
