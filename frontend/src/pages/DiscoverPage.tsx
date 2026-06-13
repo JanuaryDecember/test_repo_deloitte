@@ -6,7 +6,7 @@ import type { MatchResult } from '../types/match';
 import { useAuth } from '../auth/useAuth';
 import { useMatchCount } from '../contexts/MatchContext';
 import { MatchOverlay } from '../components/MatchOverlay';
-import { getAccentColor } from '../utils/accentColor';
+import { CandidateCardContent } from '../components/CandidateCardContent';
 import styles from './DiscoverPage.module.css';
 
 type SwipeStatus = 'idle' | 'animating';
@@ -261,7 +261,11 @@ export function DiscoverPage() {
 
             {/* Back cards */}
             {back2Exists && <div className={`${styles.backCard} ${styles.backCard2}`} />}
-            {back1Exists && <div className={`${styles.backCard} ${styles.backCard1}`} />}
+            {back1Exists && (
+              <div className={`${styles.backCard} ${styles.backCard1}`}>
+                <CandidateCardContent card={stack[currentIndex + 1]} />
+              </div>
+            )}
 
             {/* Top card — key=currentIndex forces a fresh DOM node on each swipe,
                 preventing stale opacity/transform inline styles from the fly-off animation */}
@@ -292,40 +296,7 @@ export function DiscoverPage() {
                   PASS
                 </div>
 
-                {/* Gradient header with avatar */}
-                <div className={styles.cardHeader}>
-                  <div
-                    className={styles.avatar}
-                    style={{ background: getAccentColor(topCard.id) }}
-                  >
-                    {topCard.initials}
-                  </div>
-                </div>
-
-                {/* Info section */}
-                <div className={styles.cardInfo}>
-                  <h2 className={styles.candidateName}>
-                    {topCard.firstName} {topCard.lastName}
-                  </h2>
-                  <p className={styles.candidateMeta}>
-                    {topCard.roleFamily} · {topCard.serviceLine}
-                  </p>
-                  <p className={styles.candidateOffice}>📍 {topCard.contactInfo}</p>
-
-                  {(topCard.sharedInterests.length > 0 || topCard.sharedCompetencies.length > 0) && (
-                    <>
-                      <p className={styles.sharedLabel}>You both share</p>
-                      <div className={styles.chips}>
-                        {topCard.sharedInterests.map((tag) => (
-                          <span key={tag} className={styles.interestChip}>{tag}</span>
-                        ))}
-                        {topCard.sharedCompetencies.map((c) => (
-                          <span key={c} className={styles.competencyChip}>{c}</span>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
+                <CandidateCardContent card={topCard} />
               </div>
             )}
           </>

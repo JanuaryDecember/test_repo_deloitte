@@ -53,12 +53,25 @@
   transform: scale(0.94) translateY(17px);
   opacity: 0.8;
   z-index: 20;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .backCard2 {
   transform: scale(0.88) translateY(34px);
   opacity: 0.55;
   z-index: 10;
+}
+
+@keyframes card-promote {
+  from {
+    transform: scale(0.94) translateY(17px);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
 /* ---- Top card — Style A: Warm ---- */
@@ -74,6 +87,7 @@
   touch-action: none;
   user-select: none;
   z-index: 30;
+  animation: card-promote 0.3s ease-out;
 }
 
 .topCard:active {
