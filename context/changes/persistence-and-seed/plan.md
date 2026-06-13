@@ -1,7 +1,7 @@
 ---
 change_id: "persistence-and-seed"
 roadmap_id: "F-01"
-status: revised
+status: implemented
 created: 2026-06-13
 prd_refs: [Account provisioning, Data handling NFR, Business Logic]
 prerequisites: []
@@ -98,22 +98,22 @@ This slice does NOT introduce:
 
 #### Backend
 
-- [ ] Create package `com.example.deloitter.employee/` (feature-grouped).
-- [ ] Create package `com.example.deloitter.catalog/` (shared catalog items).
-- [ ] Create `backend/src/main/java/com/example/deloitter/employee/Employee.java`:
+- [x] Create package `com.example.deloitter.employee/` (feature-grouped).
+- [x] Create package `com.example.deloitter.catalog/` (shared catalog items).
+- [x] Create `backend/src/main/java/com/example/deloitter/employee/Employee.java`:
   - `@Entity` with fields mapping to the `employee` table.
   - `@ManyToMany` for `interests` (join table `employee_interest`) and `competencies` (join table `employee_competency`).
   - Fields: `id`, `email`, `passwordHash`, `firstName`, `lastName`, `serviceLine`, `roleFamily`, `contactInfo`, `createdAt`.
-- [ ] Create `backend/src/main/java/com/example/deloitter/catalog/Interest.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/catalog/Interest.java`:
   - `@Entity` with `id`, `name`.
-- [ ] Create `backend/src/main/java/com/example/deloitter/catalog/Competency.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/catalog/Competency.java`:
   - `@Entity` with `id`, `name`.
-- [ ] Create `backend/src/main/java/com/example/deloitter/employee/EmployeeRepository.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/employee/EmployeeRepository.java`:
   - `extends JpaRepository<Employee, Long>`
   - `Optional<Employee> findByEmail(String email);`
-- [ ] Create `backend/src/main/java/com/example/deloitter/catalog/InterestRepository.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/catalog/InterestRepository.java`:
   - `extends JpaRepository<Interest, Long>`
-- [ ] Create `backend/src/main/java/com/example/deloitter/catalog/CompetencyRepository.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/catalog/CompetencyRepository.java`:
   - `extends JpaRepository<Competency, Long>`
 
 #### Frontend
@@ -122,8 +122,8 @@ This slice does NOT introduce:
 
 #### Verification
 
-- [ ] Run `.\mvnw.cmd spring-boot:run` — Hibernate validates entities against the Flyway-created schema without errors.
-- [ ] Run `.\mvnw.cmd test` — existing `DeloitterApplicationTests` context-load test passes. **Note:** Docker Compose Postgres must be running (Testcontainers is added in Phase 5; until then, tests require the local database).
+- [x] Run `.\mvnw.cmd spring-boot:run` — Hibernate validates entities against the Flyway-created schema without errors.
+- [x] Run `.\mvnw.cmd test` — existing `DeloitterApplicationTests` context-load test passes. **Note:** Docker Compose Postgres must be running (Testcontainers is added in Phase 5; until then, tests require the local database).
 
 ---
 
@@ -133,10 +133,10 @@ This slice does NOT introduce:
 
 #### Backend
 
-- [ ] Create `backend/src/main/resources/db/migration/V4__seed_catalog.sql`:
+- [x] Create `backend/src/main/resources/db/migration/V4__seed_catalog.sql`:
   - Insert ~15 interests (e.g., "Machine Learning", "Hiking", "Public Speaking", "Board Games", "Photography", "Sustainability", "Cooking", "Travel", "Music", "Reading", "Fitness", "Gaming", "Volunteering", "Startups", "Design Thinking").
   - Insert ~15 competencies (e.g., "Java", "Python", "Cloud Architecture", "Data Analytics", "Project Management", "UX Design", "Financial Modeling", "Cybersecurity", "Agile Coaching", "Strategy Consulting", "Change Management", "DevOps", "AI/ML Engineering", "Risk Assessment", "Stakeholder Management").
-- [ ] Create `backend/src/main/resources/db/migration/V5__seed_employees.sql`:
+- [x] Create `backend/src/main/resources/db/migration/V5__seed_employees.sql`:
   - Insert ~20 demo employees with:
     - Realistic names, unique emails (`firstname.lastname@deloitte.demo`)
     - BCrypt-hashed passwords (all use `password123` for demo convenience — document this)
@@ -151,13 +151,13 @@ This slice does NOT introduce:
 
 #### Verification
 
-- [ ] Run `.\mvnw.cmd spring-boot:run` — Flyway applies V4 and V5; no errors.
-- [ ] Connect to Postgres (`docker exec -it <container> psql -U deloitter`) and verify:
-  - `SELECT count(*) FROM employee;` → ~20
-  - `SELECT count(*) FROM interest;` → ~15
-  - `SELECT count(*) FROM competency;` → ~15
-  - `SELECT count(*) FROM employee_interest;` → varied (60–140 rows)
-  - `SELECT count(*) FROM employee_competency;` → varied (60–120 rows)
+- [x] Run `.\mvnw.cmd spring-boot:run` — Flyway applies V4 and V5; no errors. *(Verified: "Successfully applied 2 migrations to schema "public", now at version v5". Started in 1.582 seconds.)*
+- [x] Connect to Postgres and verify: *(Verified via `podman exec postgres psql`)*
+  - `SELECT count(*) FROM employee;` → 20 ✅
+  - `SELECT count(*) FROM interest;` → 15 ✅
+  - `SELECT count(*) FROM competency;` → 15 ✅
+  - `SELECT count(*) FROM employee_interest;` → 103 rows ✅
+  - `SELECT count(*) FROM employee_competency;` → 92 rows ✅
 
 ---
 
