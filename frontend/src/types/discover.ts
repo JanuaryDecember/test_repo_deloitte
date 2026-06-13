@@ -15,7 +15,10 @@ export interface SwipeRequest {
   liked: boolean;
 }
 
+import type { MatchResult } from './match';
+
 export interface SwipeResponse {
   success: boolean;
+  match: MatchResult | null;
 }
 

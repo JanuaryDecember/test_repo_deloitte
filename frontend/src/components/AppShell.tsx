@@ -1,11 +1,30 @@
+import { useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router';
 import { useAuth } from '../auth/useAuth';
+import { useMatchCount } from '../contexts/MatchContext';
+import { fetchMatches } from '../api/client';
 import styles from './AppShell.module.css';
 
 export function AppShell() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { matchCount, setMatchCount } = useMatchCount();
+
+  // Fetch initial match count once on mount
+  useEffect(() => {
+    let cancelled = false;
+    fetchMatches()
+      .then((data) => {
+        if (!cancelled) setMatchCount(data.length);
+      })
+      .catch(() => {
+        // Silently ignore — badge will just show 0
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [setMatchCount]);
 
   // Derive active tab from current path
   const activeTab = pathname.startsWith('/matches')
@@ -47,6 +66,11 @@ export function AppShell() {
             aria-current={activeTab === 'matches' ? 'page' : undefined}
           >
             Matches
+            {matchCount > 0 && (
+              <span className={styles.matchBadge} aria-label={`${matchCount} matches`}>
+                {matchCount}
+              </span>
+            )}
             {activeTab === 'matches' && (
               <div className={styles.navActiveBar} />
             )}

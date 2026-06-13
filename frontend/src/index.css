@@ -1,5 +1,11 @@
 @import './styles/tokens.css';
 
+/* Global keyframe: referenced by name in inline styles (MatchOverlay confetti) */
+@keyframes dlConfetti {
+  0%   { transform: translateY(-30px) rotate(0deg);   opacity: 1; }
+  100% { transform: translateY(640px) rotate(540deg); opacity: 0; }
+}
+
 *,
 *::before,
 *::after {

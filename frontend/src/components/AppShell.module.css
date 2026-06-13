@@ -90,6 +90,24 @@
   background: var(--dl-green);
 }
 
+/* Match count badge (design comp line 71) */
+.matchBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: oklch(0.70 0.16 145);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  margin-left: 5px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
 /* ---- Avatar ---- */
 .avatar {
   width: 36px;

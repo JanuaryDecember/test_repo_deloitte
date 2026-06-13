@@ -6,6 +6,7 @@ import type {
   SelectionsResponse,
   SelectionsRequest,
 } from '../types/profile';
+import type { MatchItem } from '../types/match';
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? '';
 
@@ -77,5 +78,10 @@ export async function updateSelections(req: SelectionsRequest): Promise<Selectio
     body: JSON.stringify(req),
   });
   return res.json() as Promise<SelectionsResponse>;
+}
+
+export async function fetchMatches(): Promise<MatchItem[]> {
+  const res = await apiFetch('/api/matches');
+  return res.json() as Promise<MatchItem[]>;
 }
 

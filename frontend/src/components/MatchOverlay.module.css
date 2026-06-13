@@ -1,0 +1,251 @@
+/* =====================================================================
+   MatchOverlay — Mutual match celebratory overlay
+   ===================================================================== */
+
+/* ---- Keyframes ---- */
+
+/* dlPop is used only inside this module — stays local */
+@keyframes dlPop {
+  0%   { transform: scale(0.94); }
+  60%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* Note: dlConfetti is defined in index.css (global) because it is
+   referenced by name in inline styles for confetti pieces. */
+
+/* ---- Overlay backdrop ---- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: oklch(0.45 0.1 150 / 0.45);
+  backdrop-filter: blur(7px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow: hidden;
+}
+
+/* ---- Confetti pieces — generated inline via style prop ---- */
+
+.confettiPiece {
+  position: absolute;
+  top: -30px;
+}
+
+/* ---- Modal card ---- */
+
+.modal {
+  position: relative;
+  width: 420px;
+  max-width: 100%;
+  background: #fff;
+  border-radius: 30px;
+  padding: 36px 34px;
+  text-align: center;
+  box-shadow: 0 40px 90px -30px oklch(0.3 0.06 150 / 0.7);
+  animation: dlPop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+/* ---- Header labels ---- */
+
+.matchLabel {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: oklch(0.62 0.13 145);
+}
+
+.compatibleTitle {
+  font-size: 29px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin-top: 4px;
+}
+
+/* ---- Avatars ---- */
+
+.avatars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 26px 0 22px;
+}
+
+.avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 800;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #fff;
+  box-shadow: 0 8px 20px -8px oklch(0.3 0.06 150 / 0.5);
+  flex-shrink: 0;
+}
+
+.avatarMatch {
+  margin-left: -18px;
+}
+
+/* ---- Names & score ---- */
+
+.matchName {
+  font-size: 16px;
+  font-weight: 700;
+  color: oklch(0.4 0.02 152);
+}
+
+.score {
+  font-size: 64px;
+  font-weight: 900;
+  color: oklch(0.6 0.16 145);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-top: 10px;
+}
+
+.compatibleLabel {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(0.6 0.08 145);
+  margin-top: -2px;
+}
+
+.shareSummary {
+  font-size: 14px;
+  color: oklch(0.5 0.02 152);
+  line-height: 1.5;
+  margin: 14px 0 22px;
+  padding: 0 6px;
+}
+
+.shareSummaryBold {
+  font-weight: 700;
+  color: oklch(0.36 0.05 150);
+}
+
+/* ---- Contact card ---- */
+
+.contactCard {
+  background: oklch(0.97 0.015 145);
+  border: 1px solid oklch(0.9 0.02 150);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.contactInfo {
+  min-width: 0;
+}
+
+.contactLabel {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: oklch(0.6 0.015 152);
+}
+
+.contactHandle {
+  font-size: 14px;
+  font-weight: 700;
+  color: oklch(0.3 0.03 152);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copyBtn {
+  flex-shrink: 0;
+  border: 1px solid oklch(0.85 0.06 145);
+  background: #fff;
+  color: oklch(0.42 0.1 145);
+  font-size: 13px;
+  font-weight: 800;
+  padding: 9px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.copyBtn:hover {
+  background: oklch(0.96 0.03 145);
+}
+
+/* ---- Action buttons ---- */
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.keepSwipingBtn {
+  flex: 1;
+  border: 1.5px solid oklch(0.88 0.02 150);
+  background: #fff;
+  color: oklch(0.35 0.02 152);
+  font-size: 15px;
+  font-weight: 800;
+  padding: 13px;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.keepSwipingBtn:hover {
+  background: oklch(0.97 0.01 150);
+}
+
+.viewMatchesBtn {
+  flex: 1;
+  border: none;
+  background: oklch(0.70 0.16 145);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  padding: 13px;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.viewMatchesBtn:hover {
+  background: oklch(0.64 0.16 145);
+}
+
+/* ---- Toast ---- */
+
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  background: oklch(0.27 0.03 152);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 22px;
+  border-radius: 999px;
+  box-shadow: 0 14px 34px -14px oklch(0.3 0.06 150 / 0.7);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+
+

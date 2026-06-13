@@ -2,6 +2,10 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { fetchStack, recordSwipe } from '../api/client';
 import type { CandidateCard } from '../types/discover';
+import type { MatchResult } from '../types/match';
+import { useAuth } from '../auth/useAuth';
+import { useMatchCount } from '../contexts/MatchContext';
+import { MatchOverlay } from '../components/MatchOverlay';
 import { getAccentColor } from '../utils/accentColor';
 import styles from './DiscoverPage.module.css';
 
@@ -9,6 +13,17 @@ type SwipeStatus = 'idle' | 'animating';
 
 export function DiscoverPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { incrementMatchCount } = useMatchCount();
+
+  // Track mount to avoid state updates after navigating away
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const [stack, setStack] = useState<CandidateCard[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -18,6 +33,8 @@ export function DiscoverPage() {
   const [swipeStatus, setSwipeStatus] = useState<SwipeStatus>('idle');
   // Increment to trigger a reload (initial load + retry)
   const [fetchKey, setFetchKey] = useState(0);
+  // Match overlay — set when a mutual match is detected
+  const [pendingMatch, setPendingMatch] = useState<MatchResult | null>(null);
 
   // Drag state — stored in refs to avoid re-renders during pointer move
   const dragging = useRef(false);
@@ -87,12 +104,19 @@ export function DiscoverPage() {
     (liked: boolean, candidateId: number) => {
       setCurrentIndex((i) => i + 1);
       setSwipeStatus('idle');
-      // Fire-and-forget — don't block UI transition
-      recordSwipe({ candidateId, liked }).catch((err: unknown) => {
-        console.error('recordSwipe failed:', err);
-      });
+      // Await response to detect mutual matches — card animation already started
+      recordSwipe({ candidateId, liked })
+        .then((response) => {
+          if (mountedRef.current && response.match) {
+            incrementMatchCount();
+            setPendingMatch(response.match);
+          }
+        })
+        .catch((err: unknown) => {
+          console.error('recordSwipe failed:', err);
+        });
     },
-    []
+    [incrementMatchCount]
   );
 
   const flyOff = useCallback(
@@ -114,7 +138,7 @@ export function DiscoverPage() {
   );
 
   const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!topCard || swipeStatus !== 'idle') return;
+    if (!topCard || swipeStatus !== 'idle' || pendingMatch) return;
     dragging.current = true;
     startX.current = e.clientX;
     startY.current = e.clientY;
@@ -130,7 +154,7 @@ export function DiscoverPage() {
     } catch {
       // ignore
     }
-  }, [topCard, swipeStatus]);
+  }, [topCard, swipeStatus, pendingMatch]);
 
   const onPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (!dragging.current) return;
@@ -161,16 +185,20 @@ export function DiscoverPage() {
   }, [topCard, flyOff, springBack]);
 
   const handleLike = useCallback(() => {
-    if (!topCard || swipeStatus !== 'idle') return;
+    if (!topCard || swipeStatus !== 'idle' || pendingMatch) return;
     flyOff('like', topCard.id);
-  }, [topCard, swipeStatus, flyOff]);
+  }, [topCard, swipeStatus, flyOff, pendingMatch]);
 
   const handlePass = useCallback(() => {
-    if (!topCard || swipeStatus !== 'idle') return;
+    if (!topCard || swipeStatus !== 'idle' || pendingMatch) return;
     flyOff('pass', topCard.id);
-  }, [topCard, swipeStatus, flyOff]);
+  }, [topCard, swipeStatus, flyOff, pendingMatch]);
 
   // ---- Render ----
+
+  const meInitials = user
+    ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
+    : '';
 
   return (
     <div className={styles.page}>
@@ -304,7 +332,6 @@ export function DiscoverPage() {
         )}
       </div>
 
-      {/* Action buttons — shown only when there's a top card */}
       {topCard && !loading && !error && (
         <>
           <div className={styles.actions}>
@@ -312,7 +339,7 @@ export function DiscoverPage() {
               type="button"
               className={styles.passBtn}
               onClick={handlePass}
-              disabled={swipeStatus !== 'idle'}
+              disabled={swipeStatus !== 'idle' || !!pendingMatch}
               title="Pass"
             >
               ✕
@@ -321,7 +348,7 @@ export function DiscoverPage() {
               type="button"
               className={styles.likeBtn}
               onClick={handleLike}
-              disabled={swipeStatus !== 'idle'}
+              disabled={swipeStatus !== 'idle' || !!pendingMatch}
               title="Like"
             >
               ♥
@@ -331,6 +358,19 @@ export function DiscoverPage() {
             Drag the card or use the buttons · {remaining} colleague{remaining !== 1 ? 's' : ''} left
           </p>
         </>
+      )}
+
+      {/* Match overlay — shown when a mutual match is detected */}
+      {pendingMatch && (
+        <MatchOverlay
+          match={pendingMatch}
+          me={{ initials: meInitials }}
+          onClose={() => setPendingMatch(null)}
+          onViewMatches={() => {
+            setPendingMatch(null);
+            navigate('/matches');
+          }}
+        />
       )}
     </div>
   );

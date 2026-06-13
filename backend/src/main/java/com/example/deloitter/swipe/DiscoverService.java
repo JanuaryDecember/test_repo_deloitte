@@ -2,6 +2,8 @@ package com.example.deloitter.swipe;
 
 import com.example.deloitter.employee.Employee;
 import com.example.deloitter.employee.EmployeeRepository;
+import com.example.deloitter.match.MatchResult;
+import com.example.deloitter.match.MatchService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,14 +21,17 @@ public class DiscoverService {
     private final EmployeeRepository employeeRepository;
     private final SwipeRepository swipeRepository;
     private final CompatibilityService compatibilityService;
+    private final MatchService matchService;
 
     public DiscoverService(
             EmployeeRepository employeeRepository,
             SwipeRepository swipeRepository,
-            CompatibilityService compatibilityService) {
+            CompatibilityService compatibilityService,
+            MatchService matchService) {
         this.employeeRepository = employeeRepository;
         this.swipeRepository = swipeRepository;
         this.compatibilityService = compatibilityService;
+        this.matchService = matchService;
     }
 
     /**
@@ -77,26 +83,31 @@ public class DiscoverService {
 
     /**
      * Records a swipe decision (like or pass).
+     * When {@code liked} is true, also checks for a mutual match and returns it if found.
+     * Returns an empty Optional for passes or one-sided likes (privacy guardrail).
      * Throws 409 if the user has already swiped this candidate.
      * Throws 400 if candidateId is invalid or equals the swiper's own ID.
      */
     @Transactional
-    public void recordSwipe(Employee me, Long candidateId, boolean liked) {
+    public Optional<MatchResult> recordSwipe(Employee me, Long candidateId, boolean liked) {
         if (candidateId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "candidateId is required");
         }
         if (candidateId.equals(me.getId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot swipe on yourself");
         }
-        if (!employeeRepository.existsById(candidateId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Candidate not found: " + candidateId);
-        }
+        Employee candidate = employeeRepository.findById(candidateId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Candidate not found: " + candidateId));
         if (swipeRepository.existsBySwiperIdAndCandidateId(me.getId(), candidateId)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Already swiped on candidate: " + candidateId);
         }
 
-        EmployeeSwipe swipe = new EmployeeSwipe(me.getId(), candidateId, liked);
-        swipeRepository.save(swipe);
+        swipeRepository.save(new EmployeeSwipe(me.getId(), candidateId, liked));
+
+        if (liked) {
+            return matchService.detectAndCreateMatch(me, candidate);
+        }
+        return Optional.empty();
     }
 }
 

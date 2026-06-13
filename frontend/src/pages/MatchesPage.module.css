@@ -1,0 +1,308 @@
+.page {
+  padding: 24px 20px 40px;
+  max-width: 780px;
+  margin: 0 auto;
+  min-height: 100%;
+}
+
+/* ── Header ────────────────────────────────────── */
+.title {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--dl-text);
+}
+
+.subtitle {
+  font-size: 14.5px;
+  color: oklch(0.55 0.02 152);
+  margin-top: 3px;
+  margin-bottom: 28px;
+}
+
+/* ── Empty state ───────────────────────────────── */
+.emptyCard {
+  background: #fff;
+  border-radius: 24px;
+  padding: 54px;
+  text-align: center;
+  box-shadow: 0 14px 34px -26px oklch(0.4 0.05 150 / 0.4);
+}
+
+.emptyEmoji {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: oklch(0.93 0.06 145);
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+}
+
+.emptyTitle {
+  font-size: 19px;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.emptySubtitle {
+  font-size: 14px;
+  color: oklch(0.55 0.02 152);
+  margin: 0 0 24px;
+}
+
+.emptyBtn {
+  background: oklch(0.58 0.14 145);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.emptyBtn:hover {
+  background: oklch(0.52 0.14 145);
+}
+
+/* ── Grid ──────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 340px));
+  gap: 18px;
+}
+
+/* ── Match card ────────────────────────────────── */
+.matchCard {
+  background: #fff;
+  border: 1px solid oklch(0.91 0.012 150);
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 14px 34px -26px oklch(0.4 0.05 150 / 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Top row */
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 900;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.nameBlock {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardName {
+  font-size: 15px;
+  font-weight: 800;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardRole {
+  font-size: 12.5px;
+  color: oklch(0.55 0.02 152);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scoreBadge {
+  background: oklch(0.93 0.06 145);
+  border-radius: 13px;
+  padding: 7px 11px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.scoreNum {
+  font-size: 20px;
+  font-weight: 900;
+  color: oklch(0.42 0.1 145);
+  line-height: 1;
+}
+
+.scoreLabel {
+  font-size: 10px;
+  font-weight: 800;
+  color: oklch(0.52 0.08 145);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Shared chips */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  background: oklch(0.95 0.03 145);
+  color: oklch(0.42 0.08 148);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+
+/* Divider + contact */
+.divider {
+  border: none;
+  border-top: 1px solid oklch(0.93 0.01 150);
+  margin: 0;
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: oklch(0.4 0.02 152);
+}
+
+.contactHandle {
+  font-weight: 700;
+  flex: 1;
+}
+
+.messageBtn {
+  width: 100%;
+  border: 1px solid oklch(0.85 0.06 145);
+  background: oklch(0.97 0.02 145);
+  color: oklch(0.42 0.1 145);
+  font-size: 13.5px;
+  font-weight: 800;
+  padding: 10px;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s;
+}
+
+.messageBtn:hover {
+  background: oklch(0.93 0.04 145);
+  border-color: oklch(0.78 0.08 145);
+}
+
+/* ── Skeleton ──────────────────────────────────── */
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 340px));
+  gap: 18px;
+}
+
+.skeletonCard {
+  background: #fff;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 14px 34px -26px oklch(0.4 0.05 150 / 0.4);
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeletonLine {
+  height: 14px;
+  border-radius: 7px;
+  background: linear-gradient(90deg, oklch(0.94 0.01 150) 25%, oklch(0.90 0.01 150) 50%, oklch(0.94 0.01 150) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  margin-bottom: 10px;
+}
+
+.skeletonLineShort {
+  width: 60%;
+}
+
+.skeletonAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, oklch(0.94 0.01 150) 25%, oklch(0.90 0.01 150) 50%, oklch(0.94 0.01 150) 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  margin-bottom: 14px;
+}
+
+/* ── Error ─────────────────────────────────────── */
+.errorCard {
+  background: #fff;
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 14px 34px -26px oklch(0.4 0.05 150 / 0.4);
+}
+
+.errorTitle {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: oklch(0.45 0.1 20);
+}
+
+.errorMsg {
+  font-size: 14px;
+  color: oklch(0.55 0.02 152);
+  margin: 0 0 20px;
+}
+
+.retryBtn {
+  background: oklch(0.58 0.14 145);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.retryBtn:hover {
+  background: oklch(0.52 0.14 145);
+}
+
+/* ── Toast ─────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  background: oklch(0.27 0.03 152);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 22px;
+  border-radius: 999px;
+  box-shadow: 0 14px 34px -14px oklch(0.3 0.06 150 / 0.7);
+  white-space: nowrap;
+  pointer-events: none;
+}
+

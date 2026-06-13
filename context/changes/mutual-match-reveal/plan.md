@@ -57,7 +57,7 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 #### Backend
 
-- [ ] Create `backend/src/main/resources/db/migration/V7__create_employee_match_table.sql`:
+- [x] Create `backend/src/main/resources/db/migration/V7__create_employee_match_table.sql`:
   ```sql
   CREATE TABLE employee_match (
       id             BIGSERIAL PRIMARY KEY,
@@ -71,13 +71,13 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
   CREATE INDEX idx_match_emp1 ON employee_match(employee_1_id);
   CREATE INDEX idx_match_emp2 ON employee_match(employee_2_id);
   ```
-- [ ] Create `backend/src/main/java/com/example/deloitter/match/Match.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/match/Match.java`:
   - `@Entity @Table(name = "employee_match")`
   - Fields: `@Id @GeneratedValue Long id`, `Long employee1Id`, `Long employee2Id`, `int score`, `LocalDateTime createdAt`
   - `@ManyToOne(fetch = LAZY)` relationships to `Employee` for both IDs (for convenient JPA navigation)
   - `@PrePersist` sets `createdAt` if null
   - Static factory method: `Match.create(Long empA, Long empB, int score)` — automatically puts the smaller ID in `employee1Id`
-- [ ] Create `backend/src/main/java/com/example/deloitter/match/MatchRepository.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/match/MatchRepository.java`:
   - `extends JpaRepository<Match, Long>`
   - Method: `@Query("SELECT m FROM Match m WHERE m.employee1Id = :id OR m.employee2Id = :id") List<Match> findByEmployeeId(@Param("id") Long id)` — returns all matches for a given user
   - Method: `boolean existsByEmployee1IdAndEmployee2Id(Long emp1, Long emp2)` — prevents duplicate match creation
@@ -88,9 +88,9 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 #### Verification
 
-- [ ] Run `.\mvnw.cmd spring-boot:run` — Flyway V7 migration applies without error
-- [ ] Verify in Postgres: `\d employee_match` shows the expected schema with constraints and indexes
-- [ ] Application context starts cleanly (Hibernate validates the entity against the table)
+- [x] Run `.\mvnw.cmd spring-boot:run` — Flyway V7 migration applies without error
+- [x] Verify in Postgres: `\d employee_match` shows the expected schema with constraints and indexes
+- [x] Application context starts cleanly (Hibernate validates the entity against the table)
 
 ---
 
@@ -100,13 +100,13 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 #### Backend
 
-- [ ] Create `backend/src/main/java/com/example/deloitter/match/MatchResult.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/match/MatchResult.java`:
   - Record/DTO: `Long matchId`, `Long matchedEmployeeId`, `String firstName`, `String lastName`, `String initials`, `String roleFamily`, `String serviceLine`, `String contactInfo`, `int score`, `List<String> sharedInterests`, `List<String> sharedCompetencies`, `String shareSummary`
   - `initials` = `firstName.charAt(0) + "" + lastName.charAt(0)` (uppercased)
   - `shareSummary` = first 3 shared attributes joined by ", " + "+N more" if more exist (same logic as design comp)
-- [ ] Create `backend/src/main/java/com/example/deloitter/match/MatchItem.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/match/MatchItem.java`:
   - Record/DTO for the matches list: `Long matchId`, `Long matchedEmployeeId`, `String firstName`, `String lastName`, `String initials`, `String roleFamily`, `String serviceLine`, `String contactInfo`, `int score`, `List<String> sharedInterests`, `List<String> sharedCompetencies`
-- [ ] Create `backend/src/main/java/com/example/deloitter/match/MatchService.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/match/MatchService.java`:
   - Inject `MatchRepository`, `SwipeRepository`, `EmployeeRepository`, `CompatibilityService`
   - Method: `Optional<MatchResult> detectAndCreateMatch(Employee me, Employee candidate)`:
     1. Check if reverse swipe exists: `SwipeRepository` has a row where `swiperId = candidate.id`, `candidateId = me.id`, `liked = true`
@@ -123,20 +123,20 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
     4. Map to `MatchItem` DTOs
     5. Sort by `createdAt` descending (most recent first)
     6. Return list
-- [ ] Modify `backend/src/main/java/com/example/deloitter/swipe/SwipeResponse.java`:
+- [x] Modify `backend/src/main/java/com/example/deloitter/swipe/SwipeResponse.java`:
   - Extend from `record SwipeResponse(boolean success)` to `record SwipeResponse(boolean success, MatchResult match)` where `match` is `@Nullable` (null when no mutual match)
   - Import `com.example.deloitter.match.MatchResult`
-- [ ] Modify `backend/src/main/java/com/example/deloitter/swipe/DiscoverService.java`:
+- [x] Modify `backend/src/main/java/com/example/deloitter/swipe/DiscoverService.java`:
   - Inject `MatchService`
   - Modify `recordSwipe()` to return `Optional<MatchResult>`:
     1. (existing) Validate candidateId, check not already swiped, persist swipe
     2. (new) If `liked == true`: call `matchService.detectAndCreateMatch(me, candidateEmployee)`
     3. Return the Optional (empty for pass, empty for like with no reverse, present for mutual match)
-- [ ] Modify `backend/src/main/java/com/example/deloitter/swipe/DiscoverController.java`:
+- [x] Modify `backend/src/main/java/com/example/deloitter/swipe/DiscoverController.java`:
   - Update `POST /api/discover/swipe` handler:
     - Call updated `discoverService.recordSwipe(...)` which now returns `Optional<MatchResult>`
     - Return `new SwipeResponse(true, matchResult.orElse(null))`
-- [ ] Create `backend/src/main/java/com/example/deloitter/match/MatchController.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/match/MatchController.java`:
   - `@RestController @RequestMapping("/api/matches")`
   - Inject `MatchService`
   - `GET /api/matches`:
@@ -144,7 +144,7 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
     - Call `matchService.getMatches(employee)`
     - Return `List<MatchItem>` (200 OK)
     - Empty list if no matches (never 404)
-- [ ] Ensure `SecurityConfig` permits `/api/matches/**` within the authenticated boundary (should already be covered)
+- [x] Ensure `SecurityConfig` permits `/api/matches/**` within the authenticated boundary (should already be covered)
 
 #### Frontend
 
@@ -152,16 +152,16 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 #### Verification
 
-- [ ] Start backend with Postgres + seed data
-- [ ] Seed a mutual-like scenario: manually insert a swipe row where Ben liked Alice (`INSERT INTO employee_swipe (swiper_id, candidate_id, liked) SELECT b.id, a.id, true FROM employee b, employee a WHERE b.email = 'ben.martinez@deloitte.demo' AND a.email = 'alice.chen@deloitte.demo'`)
-- [ ] Log in as Alice, `POST /api/discover/swipe` with `{ "candidateId": <Ben's ID>, "liked": true }` → response should include `match` object with score, Ben's name, contact info, shared attributes
-- [ ] `GET /api/matches` (as Alice) → returns 1 match entry for Ben with score + contact
-- [ ] Log in as Ben, `GET /api/matches` → returns 1 match entry for Alice (same score, Alice's contact)
-- [ ] `POST /api/discover/swipe` with `{ "candidateId": <someone>, "liked": false }` → response has `match: null`
-- [ ] `POST /api/discover/swipe` with `{ "candidateId": <someone who hasn't liked me>, "liked": true }` → response has `match: null`
-- [ ] **Guardrail check (privacy):** No endpoint reveals who liked whom without a mutual match. The `match` field is null unless BOTH sides liked. The `GET /api/matches` only returns confirmed mutual matches for the authenticated user.
-- [ ] **Guardrail check (score):** The score appears ONLY in match contexts (`match` field of swipe response, matches list) — never in the stack or card responses.
-- [ ] All endpoints return 401 without auth cookie
+- [x] Start backend with Postgres + seed data
+- [x] Seed a mutual-like scenario: manually insert a swipe row where Ben liked Alice (`INSERT INTO employee_swipe (swiper_id, candidate_id, liked) SELECT b.id, a.id, true FROM employee b, employee a WHERE b.email = 'ben.martinez@deloitte.demo' AND a.email = 'alice.chen@deloitte.demo'`)
+- [x] Log in as Alice, `POST /api/discover/swipe` with `{ "candidateId": <Ben's ID>, "liked": true }` → response should include `match` object with score, Ben's name, contact info, shared attributes
+- [x] `GET /api/matches` (as Alice) → returns 1 match entry for Ben with score + contact
+- [x] Log in as Ben, `GET /api/matches` → returns 1 match entry for Alice (same score, Alice's contact)
+- [x] `POST /api/discover/swipe` with `{ "candidateId": <someone>, "liked": false }` → response has `match: null`
+- [x] `POST /api/discover/swipe` with `{ "candidateId": <someone who hasn't liked me>, "liked": true }` → response has `match: null`
+- [x] **Guardrail check (privacy):** No endpoint reveals who liked whom without a mutual match. The `match` field is null unless BOTH sides liked. The `GET /api/matches` only returns confirmed mutual matches for the authenticated user.
+- [x] **Guardrail check (score):** The score appears ONLY in match contexts (`match` field of swipe response, matches list) — never in the stack or card responses.
+- [x] All endpoints return 401 without auth cookie
 
 ---
 
@@ -171,7 +171,7 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 #### Backend
 
-- [ ] Create `backend/src/main/resources/db/migration/V8__seed_mutual_likes.sql`:
+- [x] Create `backend/src/main/resources/db/migration/V8__seed_mutual_likes.sql`:
   - Insert swipe rows where 3–4 employees have "already liked" Alice:
     ```sql
     -- Ben likes Alice (when Alice likes Ben back → instant match demo)
@@ -219,11 +219,11 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 #### Verification
 
-- [ ] Run `.\mvnw.cmd spring-boot:run` — V8 migration applies without error
-- [ ] `GET /api/discover/stack` as Alice → Ben, Chloe, Emily, Daniel are still in the stack (they are not excluded — only Alice's own outgoing swipes exclude candidates; incoming swipes from others are invisible per privacy guardrail)
-- [ ] Alice swipes right on Ben → match! Response includes `match` with score + Ben's info
-- [ ] Alice swipes right on Frank → no match (Frank hasn't liked Alice in the seed)
-- [ ] **Guardrail check:** Alice has no way to know that Daniel/Chloe/Emily have liked her before she swipes on them. Their presence in the stack looks identical to non-likers.
+- [x] Run `.\mvnw.cmd spring-boot:run` — V8 migration applies without error
+- [x] `GET /api/discover/stack` as Alice → Ben, Chloe, Emily, Daniel are still in the stack (they are not excluded — only Alice's own outgoing swipes exclude candidates; incoming swipes from others are invisible per privacy guardrail)
+- [x] Alice swipes right on Ben → match! Response includes `match` with score + Ben's info
+- [x] Alice swipes right on Frank → no match (Frank hasn't liked Alice in the seed)
+- [x] **Guardrail check:** Alice has no way to know that Daniel/Chloe/Emily have liked her before she swipes on them. Their presence in the stack looks identical to non-likers.
 
 ---
 
@@ -237,19 +237,19 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 #### Frontend
 
-- [ ] Create/update `frontend/src/types/match.ts`:
+- [x] Create/update `frontend/src/types/match.ts`:
   - `export interface MatchResult { matchId: number; matchedEmployeeId: number; firstName: string; lastName: string; initials: string; roleFamily: string; serviceLine: string; contactInfo: string; score: number; sharedInterests: string[]; sharedCompetencies: string[]; shareSummary: string; }`
   - `export interface MatchItem { matchId: number; matchedEmployeeId: number; firstName: string; lastName: string; initials: string; roleFamily: string; serviceLine: string; contactInfo: string; score: number; sharedInterests: string[]; sharedCompetencies: string[]; }`
-- [ ] Update `frontend/src/types/discover.ts`:
+- [x] Update `frontend/src/types/discover.ts`:
   - Modify `SwipeResponse` to: `{ success: boolean; match: MatchResult | null; }`
-- [ ] Update `frontend/src/api/client.ts`:
+- [x] Update `frontend/src/api/client.ts`:
   - Add typed function: `fetchMatches(): Promise<MatchItem[]>` — `GET /api/matches`
   - Ensure `recordSwipe()` return type reflects the new `SwipeResponse` shape (includes optional `match`)
 
 #### Verification
 
-- [ ] `npm run build` succeeds (types compile)
-- [ ] `npm run lint` passes
+- [x] `npm run build` succeeds (types compile)
+- [x] `npm run lint` passes
 
 ---
 
@@ -263,7 +263,7 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 #### Frontend
 
-- [ ] Create `frontend/src/components/MatchOverlay.tsx`:
+- [x] Create `frontend/src/components/MatchOverlay.tsx`:
   - **Props:** `match: MatchResult`, `me: { initials: string }`, `onClose: () => void`, `onViewMatches: () => void`
   - **Layout** (design comp lines 283–316):
     - Fixed overlay covering viewport: `position: fixed; inset: 0; z-index: 100; background: oklch(0.45 0.1 150 / .45); backdrop-filter: blur(7px); display: flex; align-items: center; justify-content: center`
@@ -290,13 +290,13 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
   - **Copy to clipboard:** on "Copy" button click, copy `match.contactInfo` to clipboard, show a toast "Copied {handle}"
   - **Accent color:** use `getAccentColor(match.matchedEmployeeId)` for the matched employee's avatar
 
-- [ ] Create `frontend/src/components/MatchOverlay.module.css`:
+- [x] Create `frontend/src/components/MatchOverlay.module.css`:
   - Keyframes:
     - `dl-pop`: `0% { transform: scale(.94) } 60% { transform: scale(1.02) } 100% { transform: scale(1) }`
     - `dl-confetti`: `0% { transform: translateY(-30px) rotate(0); opacity: 1 } 100% { transform: translateY(640px) rotate(540deg); opacity: 0 }`
   - Utility classes for overlay, modal, buttons
 
-- [ ] Integrate into `frontend/src/pages/DiscoverPage.tsx`:
+- [x] Integrate into `frontend/src/pages/DiscoverPage.tsx`:
   - After `recordSwipe()` resolves: if `response.match` is non-null, store it in state (`pendingMatch`)
   - Render `<MatchOverlay>` when `pendingMatch` is set
   - `onClose` → clear `pendingMatch` (continue swiping)
@@ -305,15 +305,15 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 #### Verification
 
-- [ ] Start both tiers; log in as Alice
-- [ ] Swipe right on Ben (seeded to have liked Alice) → card flies off, then match overlay appears
-- [ ] Overlay shows: "It's a match", "You're compatible!", both avatars, correct score, shared summary, Ben's Teams handle
-- [ ] Confetti animation plays (18 pieces falling)
-- [ ] "Copy" button copies Teams handle to clipboard
-- [ ] "Keep swiping" → overlay closes, next card visible
-- [ ] "View matches" → navigates to `/matches`
-- [ ] Swipe right on someone who hasn't liked Alice → no overlay, next card appears normally
-- [ ] Swipe left (pass) → no overlay regardless of who liked Alice
+- [x] Start both tiers; log in as Alice
+- [x] Swipe right on Ben (seeded to have liked Alice) → card flies off, then match overlay appears
+- [x] Overlay shows: "It's a match", "You're compatible!", both avatars, correct score, shared summary, Ben's Teams handle
+- [x] Confetti animation plays (18 pieces falling)
+- [x] "Copy" button copies Teams handle to clipboard
+- [x] "Keep swiping" → overlay closes, next card visible
+- [x] "View matches" → navigates to `/matches`
+- [x] Swipe right on someone who hasn't liked Alice → no overlay, next card appears normally
+- [x] Swipe left (pass) → no overlay regardless of who liked Alice
 
 ---
 
@@ -327,7 +327,7 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 #### Frontend
 
-- [ ] Create `frontend/src/pages/MatchesPage.tsx`:
+- [x] Create `frontend/src/pages/MatchesPage.tsx`:
   - **On mount:** call `fetchMatches()` → store result in state
   - **Header** (design comp lines 203–204):
     - Title: "Your matches" — `font-size: 26px; font-weight: 900; letter-spacing: -.02em`
@@ -352,18 +352,18 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
   - **Loading state:** show skeleton cards while `fetchMatches()` is in-flight
   - **Error state:** simple error message with retry button
 
-- [ ] Create `frontend/src/pages/MatchesPage.module.css`:
+- [x] Create `frontend/src/pages/MatchesPage.module.css`:
   - Button hover effects matching design comp
   - Grid responsive utilities
 
-- [ ] Replace the `MatchesPlaceholder` route:
+- [x] Replace the `MatchesPlaceholder` route:
   - Update `frontend/src/App.tsx`: change `/matches` route from `<MatchesPlaceholder />` to `<MatchesPage />`
   - Delete `frontend/src/pages/MatchesPlaceholder.tsx` (if it was created in S-03)
 
 #### Verification
 
-- [ ] `npm run build` succeeds
-- [ ] `npm run lint` passes
+- [x] `npm run build` succeeds
+- [x] `npm run lint` passes
 - [ ] Navigate to Matches tab with no matches → empty state with 💚 emoji and "Start swiping" CTA
 - [ ] Create a match (swipe right on Ben) → navigate to Matches → Ben appears in the grid
 - [ ] Card shows: Ben's avatar (accent color, initials), name, role, score %, shared interests chips, Teams handle, "Message on Teams" button
@@ -383,41 +383,41 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 #### Frontend
 
-- [ ] Update `frontend/src/components/AppShell.tsx`:
+- [x] Update `frontend/src/components/AppShell.tsx`:
   - Add match count state (fetched from `/api/matches` length on mount, or maintained in a context)
   - "Matches" tab badge (design comp line 71): green pill `background: oklch(0.70 0.16 145); color: #fff; font-size: 12px; font-weight: 800; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px` — shows count when > 0
   - When a new match occurs (from swipe response), increment count in-memory so the badge updates immediately without a re-fetch
 
-- [ ] Create a lightweight MatchContext or extend existing state management:
+- [x] Create a lightweight MatchContext or extend existing state management:
   - Stores current match count (number)
   - Provides `incrementMatchCount()` callable from DiscoverPage when a match occurs
   - Provides `setMatchCount(n)` callable from MatchesPage after fetch
   - AppShell subscribes to the count for the badge
 
-- [ ] **Toast component** (design comp lines 319–321):
+- [x] **Toast component** (design comp lines 319–321):
   - If not already created in S-03, create a simple toast: `position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 200; background: oklch(0.27 0.03 152); color: #fff; font-size: 14px; font-weight: 700; padding: 12px 22px; border-radius: 999px; box-shadow: 0 14px 34px -14px oklch(0.3 0.06 150 / .7)`
   - Auto-dismiss after ~2 seconds
   - Used for "Copied @handle" feedback on both overlay and matches page
 
-- [ ] **Edge cases:**
+- [x] **Edge cases:**
   - Match overlay should not appear if the user has already navigated away from Discover (e.g., rapid tab switching)
   - Match overlay blocks further swiping until dismissed (per design comp behavior — the overlay is modal)
   - If `fetchMatches()` fails, show error state with retry
   - If no auth session, redirect to login (handled by existing ProtectedRoute)
 
-- [ ] **Document title:** "Deloitter — Matches" while on the matches page
+- [x] **Document title:** "Deloitter — Matches" while on the matches page
 
-- [ ] Verify `npm run build` succeeds
-- [ ] Verify `npm run lint` passes
+- [x] Verify `npm run build` succeeds
+- [x] Verify `npm run lint` passes
 
 #### Verification
 
-- [ ] Match count badge visible in nav after creating a match
-- [ ] Badge count increments when a new match occurs during swiping (without page refresh)
-- [ ] Badge not visible when count is 0
-- [ ] Toast appears and auto-dismisses on copy actions
-- [ ] Page title shows "Deloitter — Matches" on matches page
-- [ ] Rapid swiping doesn't break the overlay (overlay is modal, blocks interaction)
+- [x] Match count badge visible in nav after creating a match
+- [x] Badge count increments when a new match occurs during swiping (without page refresh)
+- [x] Badge not visible when count is 0
+- [x] Toast appears and auto-dismisses on copy actions
+- [x] Page title shows "Deloitter — Matches" on matches page
+- [x] Rapid swiping doesn't break the overlay (overlay is modal, blocks interaction)
 
 ---
 
