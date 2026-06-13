@@ -35,23 +35,25 @@ This is advisory only — the archive proceeds regardless.
 ### Step 1: Validate
 
 1. Confirm `context/changes/<change-id>/` exists. If not, error: "Change folder not found: `context/changes/<change-id>/`. Nothing to archive."
-2. Confirm `context/archive/<change-id>/` does NOT already exist. If it does, error: "Already archived: `context/archive/<change-id>/` exists."
+2. Confirm no folder matching `context/archive/<YYYY-MM-DD>_<change-id>/` already exists. If it does, error: "Already archived: folder exists."
 3. Check for review files (warn if missing, per above).
 
 ### Step 2: Move the change folder and stamp with archive date
 
-Use today's date (YYYY-MM-DD) as the archive timestamp.
+Use the current date and time: `YYYY-MM-DD` for the folder prefix and `YYYY-MM-DD HH:mm` for the file header.
 
 ```bash
-mv context/changes/<change-id>/ context/archive/<change-id>/
+mv context/changes/<change-id>/ context/archive/<YYYY-MM-DD>_<change-id>/
 ```
 
-The folder and all its contents (plan.md, plan-brief.md, review/, etc.) move as-is.
+The folder name is prefixed with the archive date (e.g. `2026-06-13_persistence-and-seed`).
+
+All contents (plan.md, plan-brief.md, review/, etc.) move as-is.
 
 After moving, prepend an archive header to **all markdown files** in the archived folder (`plan.md`, `plan-brief.md`, and every file under `review/`) at the very top of the file, **before** any existing frontmatter or content:
 
 ```markdown
-> **Archived:** <YYYY-MM-DD> | Change ID: `<change-id>` | Roadmap ID: `<roadmap-id>`
+> **Archived:** <YYYY-MM-DD HH:mm> | Change ID: `<change-id>` | Roadmap ID: `<roadmap-id>`
 ```
 
 This line goes at line 1 of each file, followed by a blank line, then the original content.
@@ -101,7 +103,7 @@ Print a confirmation:
 
 ```
 ✓ Archived: <change-id> (<roadmap-id>)
-  - Moved context/changes/<change-id>/ → context/archive/<change-id>/
+  - Moved context/changes/<change-id>/ → context/archive/<YYYY-MM-DD>_<change-id>/
   - Roadmap status: done
   - Manifest status: done
   - GitHub label: status:done (or "skipped — gh not available")

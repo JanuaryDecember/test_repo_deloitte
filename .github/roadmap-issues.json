@@ -31,7 +31,7 @@
       "title": "Email+password verification and authenticated session",
       "outcome": "email+password credentials are verified against seeded accounts, an authenticated session/token is issued, and a route-level guard ensures only an authenticated \"me\" can use the app (no anonymous browsing).",
       "prdRefs": "FR-001, Access Control",
-      "status": "proposed",
+      "status": "done",
       "planReady": false,
       "northStar": false,
       "prereqs": ["F-01"],

@@ -48,7 +48,7 @@
             Title    = 'Email+password verification and authenticated session'
             Outcome  = 'email+password credentials are verified against seeded accounts, an authenticated session/token is issued, and a route-level guard ensures only an authenticated "me" can use the app (no anonymous browsing).'
             PrdRefs  = 'FR-001, Access Control'
-            Status   = 'proposed'
+            Status   = 'done'
             PlanReady = $false
             NorthStar = $false
             Prereqs  = @('F-01')

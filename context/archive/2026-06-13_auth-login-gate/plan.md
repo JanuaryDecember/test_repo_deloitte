@@ -1,3 +1,5 @@
+> **Archived:** 2026-06-13 15:55 | Change ID: `auth-login-gate` | Roadmap ID: `F-02`
+
 ---
 change_id: "auth-login-gate"
 roadmap_id: "F-02"

@@ -1,3 +1,5 @@
+> **Archived:** 2026-06-13 15:55 | Change ID: `auth-login-gate` | Roadmap ID: `F-02`
+
 # Plan Brief: Auth & login gate
 
 **Change ID:** `auth-login-gate` | **Roadmap ID:** `F-02` | **Status:** revised
