@@ -81,7 +81,7 @@ npm run dev
 # App runs on http://localhost:5173
 ```
 
-## � Demo Login Accounts
+## 🔑 Demo Login Accounts
 
 The app is seeded with test employee accounts. Use any of these credentials to log in:
 
@@ -97,7 +97,7 @@ The app is seeded with test employee accounts. Use any of these credentials to l
 
 > **Note:** These are demo accounts only. The app does not support self-registration.
 
-## �📁 Project Structure
+## 📁 Project Structure
 
 - **`backend/`** — Spring Boot REST API (see [`backend/AGENTS.md`](backend/AGENTS.md))
 - **`frontend/`** — React TypeScript SPA/PWA (see [`frontend/AGENTS.md`](frontend/AGENTS.md))
