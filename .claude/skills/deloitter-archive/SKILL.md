@@ -67,6 +67,13 @@ Find the item in the `items` array where `"changeId"` equals `<change-id>` and s
 
 Leave all other fields unchanged.
 
+### Step 4b: Update `.github/roadmap-issues.psd1` (keep in sync)
+
+Find the item block in the `Items` array where `Id` matches the roadmap ID (e.g. `'F-01'`) and change:
+- `Status   = 'ready'` (or `'proposed'`) → `Status   = 'done'`
+
+This keeps the legacy PowerShell manifest in sync with the JSON source of truth.
+
 ### Step 5: Update GitHub issue label (if gh available)
 
 If the `gh` CLI is authenticated and a repo can be resolved from `git remote get-url origin`:
