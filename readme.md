@@ -30,28 +30,50 @@ Each tier has its own `AGENTS.md` with commands, conventions, and tier-specific 
 
 - **Java 21** (for backend)
 - **Node.js 20+** (for frontend)
+- **PostgreSQL 16** (for local development without Docker)
 - **Docker & Docker Compose** (optional, for containerized deployment)
 
-### Running with Docker Compose
+### Running with Docker Compose (Recommended)
 
 ```bash
-# Start both backend and frontend
+# Start Postgres, backend, and frontend
 docker-compose up --build
 
+# Postgres: localhost:5432 (user: postgres, password: postgres, db: appdb)
 # Backend: http://localhost:8080
-# Frontend: http://localhost:3000
+# Frontend: http://localhost:5173
 ```
+
+The Docker Compose setup includes:
+
+- **Postgres 16 Alpine** container with persistent volume
+- Backend connected to Postgres with auto-migration
+- Frontend served via Nginx
 
 ### Running Locally
 
+**Postgres (required for backend):**
+
+```bash
+# Option 1: Run only Postgres from Docker Compose
+docker-compose up postgres
+
+# Option 2: Use local Postgres installation
+# Ensure Postgres is running on localhost:5432
+# Database: appdb, User: postgres, Password: postgres
+```
+
 **Backend:**
+
 ```bash
 cd backend
 ./mvnw spring-boot:run
 # API runs on http://localhost:8080
+# Connects to Postgres on localhost:5432
 ```
 
 **Frontend:**
+
 ```bash
 cd frontend
 npm install
@@ -68,6 +90,20 @@ npm run dev
   - `changes/` — Active feature plans
   - `archive/` — Completed change plans
 - **`scripts/`** — Deployment and automation scripts
+- **`docker-compose.yml`** — Multi-container orchestration (Postgres + Backend + Frontend)
+
+## 🗄️ Database
+
+The project uses **PostgreSQL 16** for data persistence.
+
+**Default credentials (development only):**
+
+- Host: `localhost:5432`
+- Database: `appdb`
+- Username: `postgres`
+- Password: `postgres`
+
+The backend handles schema migrations automatically via Spring Boot's Hibernate DDL.
 
 ## 📚 Documentation
 
