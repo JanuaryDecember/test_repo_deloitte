@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:'Figtree',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  button{font-family:inherit}
+  @keyframes dl-pop{0%{transform:scale(.94)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+  @keyframes dl-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  @keyframes dl-confetti{0%{transform:translateY(-30px) rotate(0);opacity:1}100%{transform:translateY(640px) rotate(540deg);opacity:0}}
+  @keyframes dl-fadein{from{opacity:0}to{opacity:1}}
+  @keyframes dl-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:oklch(0.985 0.012 135);color:oklch(0.26 0.03 152);position:relative;overflow:hidden">
+
+  <!-- ============ LOGIN ============ -->
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:32px">
+      <div style="position:absolute;width:520px;height:520px;border-radius:50%;background:oklch(0.82 0.11 145 / .35);filter:blur(40px);top:-160px;left:-120px"></div>
+      <div style="position:absolute;width:460px;height:460px;border-radius:50%;background:oklch(0.85 0.09 175 / .3);filter:blur(40px);bottom:-180px;right:-100px"></div>
+
+      <div style="position:relative;width:400px;max-width:100%;background:#fff;border:1px solid oklch(0.91 0.012 150);border-radius:28px;box-shadow:0 24px 60px -28px oklch(0.4 0.05 150 / .45);padding:38px 34px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:26px">
+          <div style="width:40px;height:40px;border-radius:13px;background:oklch(0.70 0.16 145);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:22px;box-shadow:0 6px 16px -6px oklch(0.70 0.16 145 / .8)">d</div>
+          <div style="font-size:23px;font-weight:900;letter-spacing:-.02em">Deloitter</div>
+        </div>
+        <div style="font-size:27px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin-bottom:8px">Find your people<br>inside the firm.</div>
+        <div style="font-size:15px;color:oklch(0.53 0.02 152);line-height:1.45;margin-bottom:26px">Swipe through colleagues who share your interests and skills. Match, then take it to Teams.</div>
+
+        <div style="font-size:13px;font-weight:600;color:oklch(0.42 0.02 152);margin-bottom:7px">Work email</div>
+        <input value="{{ me.email }}" readonly style="width:100%;border:1px solid oklch(0.89 0.012 150);background:oklch(0.985 0.008 145);border-radius:13px;padding:13px 15px;font-size:15px;color:oklch(0.30 0.02 152);margin-bottom:16px;outline:none">
+        <div style="font-size:13px;font-weight:600;color:oklch(0.42 0.02 152);margin-bottom:7px">Password</div>
+        <input type="password" value="demo-password" readonly style="width:100%;border:1px solid oklch(0.89 0.012 150);background:oklch(0.985 0.008 145);border-radius:13px;padding:13px 15px;font-size:15px;color:oklch(0.30 0.02 152);margin-bottom:24px;outline:none">
+
+        <button onClick="{{ login }}" style="width:100%;border:none;background:oklch(0.70 0.16 145);color:#fff;font-size:16px;font-weight:800;padding:15px;border-radius:14px;cursor:pointer;box-shadow:0 12px 26px -12px oklch(0.70 0.16 145 / .9);transition:transform .12s,filter .12s" style-hover="filter:brightness(1.05);transform:translateY(-1px)">Log in</button>
+        <div style="text-align:center;font-size:12.5px;color:oklch(0.6 0.015 152);margin-top:16px">Pre-seeded demo account · no real data</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ============ APP SHELL ============ -->
+  <sc-if value="{{ showApp }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:1180px;margin:0 auto;padding:0 28px">
+
+      <!-- header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;height:72px;position:sticky;top:0;background:oklch(0.985 0.012 135 / .85);backdrop-filter:blur(10px);z-index:50">
+        <div style="display:flex;align-items:center;gap:9px">
+          <div style="width:34px;height:34px;border-radius:11px;background:oklch(0.70 0.16 145);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:19px">d</div>
+          <div style="font-size:19px;font-weight:900;letter-spacing:-.02em">Deloitter</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <button onClick="{{ navSwipe }}" style="position:relative;border:none;background:none;font-size:15px;font-weight:700;color:oklch(0.30 0.02 152);padding:8px 14px;cursor:pointer;border-radius:10px">
+            Discover
+            <sc-if value="{{ tabSwipe }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:14px;right:14px;bottom:0;height:3px;border-radius:3px;background:oklch(0.70 0.16 145)"></div></sc-if>
+          </button>
+          <button onClick="{{ navMatches }}" style="position:relative;border:none;background:none;font-size:15px;font-weight:700;color:oklch(0.30 0.02 152);padding:8px 14px;cursor:pointer;border-radius:10px;display:flex;align-items:center;gap:7px">
+            Matches
+            <sc-if value="{{ hasMatches }}" hint-placeholder-val="{{ false }}"><span style="background:oklch(0.70 0.16 145);color:#fff;font-size:12px;font-weight:800;min-width:20px;height:20px;padding:0 6px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center">{{ matchCount }}</span></sc-if>
+            <sc-if value="{{ tabMatches }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:14px;right:14px;bottom:0;height:3px;border-radius:3px;background:oklch(0.70 0.16 145)"></div></sc-if>
+          </button>
+          <button onClick="{{ navProfile }}" style="position:relative;border:none;background:none;font-size:15px;font-weight:700;color:oklch(0.30 0.02 152);padding:8px 14px;cursor:pointer;border-radius:10px">
+            Profile
+            <sc-if value="{{ tabProfile }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:14px;right:14px;bottom:0;height:3px;border-radius:3px;background:oklch(0.70 0.16 145)"></div></sc-if>
+          </button>
+          <div style="width:36px;height:36px;border-radius:50%;background:oklch(0.70 0.16 145);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;margin-left:10px">{{ me.initials }}</div>
+        </div>
+      </div>
+
+      <!-- ========= DISCOVER / SWIPE ========= -->
+      <sc-if value="{{ isSwipe }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;align-items:center;padding:18px 0 40px">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;width:380px;max-width:100%;margin-bottom:18px">
+            <div>
+              <div style="font-size:20px;font-weight:800;letter-spacing:-.01em">Discover colleagues</div>
+              <div style="font-size:13.5px;color:oklch(0.55 0.02 152)">Ranked by what you share · score hidden until you match</div>
+            </div>
+          </div>
+
+          <!-- card stack -->
+          <div style="position:relative;width:360px;height:540px">
+
+            <sc-if value="{{ deckEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:0;border-radius:28px;background:#fff;border:1px solid oklch(0.91 0.012 150);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;box-shadow:0 18px 44px -26px oklch(0.4 0.05 150 / .4)">
+                <div style="width:72px;height:72px;border-radius:50%;background:oklch(0.92 0.06 145);display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:18px;animation:dl-float 3s ease-in-out infinite">🌱</div>
+                <div style="font-size:21px;font-weight:800;margin-bottom:8px">You're all caught up</div>
+                <div style="font-size:14.5px;color:oklch(0.55 0.02 152);line-height:1.5;margin-bottom:22px">You've seen everyone for now. Check who you matched with.</div>
+                <button onClick="{{ navMatches }}" style="border:none;background:oklch(0.70 0.16 145);color:#fff;font-size:15px;font-weight:800;padding:13px 26px;border-radius:13px;cursor:pointer">View your matches</button>
+              </div>
+            </sc-if>
+
+            <!-- back card 2 -->
+            <sc-if value="{{ back2Exists }}" hint-placeholder-val="{{ true }}">
+              <div style="position:absolute;inset:0;border-radius:28px;background:#fff;border:1px solid oklch(0.92 0.012 150);transform:scale(.88) translateY(34px);opacity:.55;box-shadow:0 14px 34px -24px oklch(0.4 0.05 150 / .5);z-index:10"></div>
+            </sc-if>
+            <!-- back card 1 -->
+            <sc-if value="{{ back1Exists }}" hint-placeholder-val="{{ true }}">
+              <div style="position:absolute;inset:0;border-radius:28px;background:#fff;border:1px solid oklch(0.92 0.012 150);transform:scale(.94) translateY(17px);opacity:.8;box-shadow:0 14px 34px -24px oklch(0.4 0.05 150 / .5);z-index:20"></div>
+            </sc-if>
+
+            <!-- TOP CARD -->
+            <sc-if value="{{ topExists }}" hint-placeholder-val="{{ true }}">
+
+              <!-- STYLE A: WARM -->
+              <sc-if value="{{ styleA }}" hint-placeholder-val="{{ true }}">
+                <div id="dl-top-card" onPointerDown="{{ onPointerDown }}" onPointerMove="{{ onPointerMove }}" onPointerUp="{{ onPointerUp }}" style="position:absolute;inset:0;border-radius:28px;background:#fff;border:1px solid oklch(0.91 0.012 150);box-shadow:0 26px 56px -26px oklch(0.4 0.05 150 / .55);overflow:hidden;cursor:grab;touch-action:none;user-select:none;z-index:30">
+                  <div class="dl-like-badge" style="position:absolute;top:24px;left:22px;z-index:5;opacity:0;border:3px solid oklch(0.70 0.16 145);color:oklch(0.62 0.16 145);font-weight:900;font-size:24px;letter-spacing:.08em;padding:5px 14px;border-radius:12px;transform:rotate(-12deg);background:#fff">LIKE</div>
+                  <div class="dl-pass-badge" style="position:absolute;top:24px;right:22px;z-index:5;opacity:0;border:3px solid oklch(0.64 0.18 25);color:oklch(0.6 0.18 25);font-weight:900;font-size:24px;letter-spacing:.08em;padding:5px 14px;border-radius:12px;transform:rotate(12deg);background:#fff">PASS</div>
+                  <div style="height:236px;background:linear-gradient(150deg, oklch(0.88 0.09 150), oklch(0.83 0.08 178));display:flex;align-items:center;justify-content:center;position:relative">
+                    <div style="width:112px;height:112px;border-radius:50%;background:{{ top.accent }};color:#fff;font-weight:900;font-size:42px;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 30px -12px oklch(0.3 0.06 150 / .6);border:4px solid #fff">{{ top.initials }}</div>
+                  </div>
+                  <div style="padding:20px 22px">
+                    <div style="font-size:24px;font-weight:800;letter-spacing:-.02em">{{ top.name }}</div>
+                    <div style="font-size:14.5px;color:oklch(0.5 0.02 152);font-weight:600;margin-top:2px">{{ top.role }} · {{ top.serviceLine }}</div>
+                    <div style="font-size:13px;color:oklch(0.6 0.015 152);margin-top:3px">📍 {{ top.office }}</div>
+                    <div style="font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:oklch(0.62 0.13 145);margin:18px 0 10px">You both share</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px">
+                      <sc-for list="{{ top.sharedInterests }}" as="tag" hint-placeholder-count="3">
+                        <span style="background:oklch(0.93 0.06 145);color:oklch(0.4 0.1 148);font-size:13px;font-weight:700;padding:7px 13px;border-radius:999px">{{ tag }}</span>
+                      </sc-for>
+                      <sc-for list="{{ top.sharedComps }}" as="c2" hint-placeholder-count="2">
+                        <span style="background:#fff;border:1.5px solid oklch(0.88 0.03 150);color:oklch(0.45 0.02 152);font-size:13px;font-weight:700;padding:6px 12px;border-radius:999px">{{ c2 }}</span>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <!-- STYLE B: BOLD -->
+              <sc-if value="{{ styleB }}" hint-placeholder-val="{{ false }}">
+                <div id="dl-top-card" onPointerDown="{{ onPointerDown }}" onPointerMove="{{ onPointerMove }}" onPointerUp="{{ onPointerUp }}" style="position:absolute;inset:0;border-radius:24px;background:oklch(0.27 0.03 152);color:oklch(0.96 0.01 145);box-shadow:0 26px 56px -24px oklch(0.3 0.05 150 / .7);overflow:hidden;cursor:grab;touch-action:none;user-select:none;z-index:30;display:flex;flex-direction:column">
+                  <div class="dl-like-badge" style="position:absolute;top:24px;left:22px;z-index:5;opacity:0;border:3px solid oklch(0.78 0.16 145);color:oklch(0.85 0.16 145);font-weight:900;font-size:24px;letter-spacing:.08em;padding:5px 14px;border-radius:12px;transform:rotate(-12deg)">LIKE</div>
+                  <div class="dl-pass-badge" style="position:absolute;top:24px;right:22px;z-index:5;opacity:0;border:3px solid oklch(0.7 0.18 25);color:oklch(0.78 0.16 25);font-weight:900;font-size:24px;letter-spacing:.08em;padding:5px 14px;border-radius:12px;transform:rotate(12deg)">PASS</div>
+                  <div style="padding:30px 26px 22px;flex:1;display:flex;flex-direction:column">
+                    <div style="width:88px;height:88px;border-radius:20px;background:{{ top.accent }};color:#fff;font-weight:900;font-size:34px;display:flex;align-items:center;justify-content:center;margin-bottom:22px">{{ top.initials }}</div>
+                    <div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.72 0.12 145)">{{ top.serviceLine }}</div>
+                    <div style="font-size:34px;font-weight:900;letter-spacing:-.03em;line-height:1.02;margin:8px 0 6px">{{ top.name }}</div>
+                    <div style="font-size:15px;font-weight:600;color:oklch(0.78 0.015 152)">{{ top.role }} · {{ top.office }}</div>
+                    <div style="height:1px;background:oklch(0.4 0.02 152);margin:22px 0 18px"></div>
+                    <div style="font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:oklch(0.65 0.02 152);margin-bottom:12px">Common ground</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px">
+                      <sc-for list="{{ top.sharedInterests }}" as="tag" hint-placeholder-count="3">
+                        <span style="border:1.5px solid oklch(0.55 0.06 150);color:oklch(0.92 0.02 145);font-size:13px;font-weight:700;padding:6px 13px;border-radius:8px">{{ tag }}</span>
+                      </sc-for>
+                      <sc-for list="{{ top.sharedComps }}" as="c2" hint-placeholder-count="2">
+                        <span style="background:oklch(0.78 0.16 145);color:oklch(0.22 0.03 152);font-size:13px;font-weight:800;padding:7px 13px;border-radius:8px">{{ c2 }}</span>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <!-- STYLE C: PLAYFUL -->
+              <sc-if value="{{ styleC }}" hint-placeholder-val="{{ false }}">
+                <div id="dl-top-card" onPointerDown="{{ onPointerDown }}" onPointerMove="{{ onPointerMove }}" onPointerUp="{{ onPointerUp }}" style="position:absolute;inset:0;border-radius:32px;background:oklch(0.98 0.02 130);background-image:radial-gradient(oklch(0.85 0.05 150 / .5) 1.4px, transparent 1.4px);background-size:15px 15px;border:1.5px solid oklch(0.88 0.03 150);box-shadow:0 26px 56px -26px oklch(0.4 0.05 150 / .55);overflow:hidden;cursor:grab;touch-action:none;user-select:none;z-index:30">
+                  <div class="dl-like-badge" style="position:absolute;top:24px;left:22px;z-index:5;opacity:0;background:oklch(0.70 0.16 145);color:#fff;font-weight:900;font-size:22px;letter-spacing:.06em;padding:8px 16px;border-radius:14px;transform:rotate(-10deg);box-shadow:0 8px 18px -6px oklch(0.70 0.16 145 / .8)">LIKE!</div>
+                  <div class="dl-pass-badge" style="position:absolute;top:24px;right:22px;z-index:5;opacity:0;background:oklch(0.64 0.18 25);color:#fff;font-weight:900;font-size:22px;letter-spacing:.06em;padding:8px 16px;border-radius:14px;transform:rotate(10deg);box-shadow:0 8px 18px -6px oklch(0.64 0.18 25 / .8)">NOPE</div>
+                  <div style="padding:34px 26px 20px;position:relative">
+                    <div style="position:absolute;top:36px;left:74px;width:64px;height:64px;border-radius:50%;background:oklch(0.86 0.1 80 / .55)"></div>
+                    <div style="position:relative;width:104px;height:104px;border-radius:42% 58% 56% 44%;background:{{ top.accent }};color:#fff;font-weight:900;font-size:38px;display:flex;align-items:center;justify-content:center;transform:rotate(-4deg);box-shadow:0 14px 28px -12px oklch(0.3 0.06 150 / .6)">{{ top.initials }}</div>
+                    <div style="font-size:26px;font-weight:900;letter-spacing:-.02em;margin-top:20px;line-height:1.1"><span style="background:linear-gradient(transparent 62%, oklch(0.85 0.12 145 / .8) 62%);padding:0 2px">{{ top.name }}</span></div>
+                    <div style="font-size:14px;color:oklch(0.5 0.02 152);font-weight:600;margin-top:4px">{{ top.role }} · {{ top.office }}</div>
+                    <div style="font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:oklch(0.6 0.13 145);margin:18px 0 11px">Your shared vibe</div>
+                    <div style="display:flex;flex-wrap:wrap;gap:9px">
+                      <sc-for list="{{ top.stickerTags }}" as="st" hint-placeholder-count="4">
+                        <span style="background:#fff;border:1.5px solid oklch(0.88 0.03 150);color:oklch(0.36 0.04 150);font-size:13px;font-weight:700;padding:7px 13px;border-radius:999px;box-shadow:0 4px 9px -5px oklch(0.4 0.05 150 / .6);transform:rotate({{ st.rot }})">{{ st.label }}</span>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+
+            </sc-if>
+          </div>
+
+          <!-- action buttons -->
+          <sc-if value="{{ topExists }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;gap:22px;margin-top:30px">
+              <button onClick="{{ passBtn }}" title="Pass" style="width:66px;height:66px;border-radius:50%;background:#fff;border:1.5px solid oklch(0.88 0.04 30);color:oklch(0.6 0.18 25);font-size:27px;font-weight:700;cursor:pointer;box-shadow:0 10px 24px -12px oklch(0.5 0.1 30 / .6);display:flex;align-items:center;justify-content:center;transition:transform .12s" style-hover="transform:translateY(-3px) scale(1.05)">✕</button>
+              <button onClick="{{ likeBtn }}" title="Like" style="width:78px;height:78px;border-radius:50%;background:oklch(0.70 0.16 145);border:none;color:#fff;font-size:34px;cursor:pointer;box-shadow:0 14px 28px -10px oklch(0.70 0.16 145 / .9);display:flex;align-items:center;justify-content:center;transition:transform .12s" style-hover="transform:translateY(-3px) scale(1.05)">♥</button>
+            </div>
+            <div style="font-size:12.5px;color:oklch(0.6 0.015 152);margin-top:16px">Drag the card or use the buttons · {{ remaining }} colleagues left</div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ========= MATCHES ========= -->
+      <sc-if value="{{ isMatches }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 0 60px">
+          <div style="font-size:26px;font-weight:900;letter-spacing:-.02em">Your matches</div>
+          <div style="font-size:14.5px;color:oklch(0.55 0.02 152);margin-top:3px;margin-bottom:28px">When you both like each other, the compatibility score and contact details unlock.</div>
+
+          <sc-if value="{{ noMatches }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#fff;border:1px solid oklch(0.91 0.012 150);border-radius:24px;padding:54px;text-align:center;max-width:480px;margin:0 auto">
+              <div style="width:66px;height:66px;border-radius:50%;background:oklch(0.93 0.06 145);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 18px">💚</div>
+              <div style="font-size:19px;font-weight:800;margin-bottom:7px">No matches yet</div>
+              <div style="font-size:14.5px;color:oklch(0.55 0.02 152);line-height:1.5;margin-bottom:22px">Keep swiping in Discover — matches show up here.</div>
+              <button onClick="{{ navSwipe }}" style="border:none;background:oklch(0.70 0.16 145);color:#fff;font-size:15px;font-weight:800;padding:12px 24px;border-radius:13px;cursor:pointer">Start swiping</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ hasMatches }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,340px));gap:18px">
+              <sc-for list="{{ matchItems }}" as="m" hint-placeholder-count="2">
+                <div style="background:#fff;border:1px solid oklch(0.91 0.012 150);border-radius:22px;padding:22px;box-shadow:0 14px 34px -26px oklch(0.4 0.05 150 / .5)">
+                  <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+                    <div style="width:56px;height:56px;border-radius:50%;background:{{ m.accent }};color:#fff;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center">{{ m.initials }}</div>
+                    <div style="flex:1;min-width:0">
+                      <div style="font-size:17px;font-weight:800;letter-spacing:-.01em">{{ m.name }}</div>
+                      <div style="font-size:13px;color:oklch(0.55 0.02 152);font-weight:600">{{ m.role }}</div>
+                    </div>
+                    <div style="text-align:center;background:oklch(0.93 0.06 145);border-radius:13px;padding:7px 11px">
+                      <div style="font-size:19px;font-weight:900;color:oklch(0.5 0.13 145);line-height:1">{{ m.score }}%</div>
+                      <div style="font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:oklch(0.55 0.08 145)">match</div>
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+                    <sc-for list="{{ m.sharedInterests }}" as="tag" hint-placeholder-count="2">
+                      <span style="background:oklch(0.95 0.03 145);color:oklch(0.42 0.08 148);font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap">{{ tag }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="border-top:1px solid oklch(0.93 0.01 150);padding-top:14px;display:flex;flex-direction:column;gap:9px">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                      <span style="font-size:13px;color:oklch(0.45 0.02 152);white-space:nowrap">💬 {{ m.teams }}</span>
+                    </div>
+                    <button onClick="{{ m.copy }}" style="width:100%;border:1px solid oklch(0.85 0.06 145);background:oklch(0.97 0.02 145);color:oklch(0.42 0.1 145);font-size:13.5px;font-weight:800;padding:10px;border-radius:11px;cursor:pointer;transition:background .12s" style-hover="background:oklch(0.94 0.04 145)">Message on Teams</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ========= PROFILE ========= -->
+      <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 0 60px;max-width:680px">
+          <div style="display:flex;align-items:center;gap:18px;background:#fff;border:1px solid oklch(0.91 0.012 150);border-radius:22px;padding:22px;margin-bottom:24px;box-shadow:0 14px 34px -28px oklch(0.4 0.05 150 / .5)">
+            <div style="width:64px;height:64px;border-radius:50%;background:oklch(0.70 0.16 145);color:#fff;font-weight:800;font-size:24px;display:flex;align-items:center;justify-content:center">{{ me.initials }}</div>
+            <div>
+              <div style="font-size:21px;font-weight:800;letter-spacing:-.01em">{{ me.name }}</div>
+              <div style="font-size:14px;color:oklch(0.55 0.02 152);font-weight:600">{{ me.role }} · {{ me.serviceLine }} · {{ me.office }}</div>
+            </div>
+          </div>
+
+          <div style="font-size:18px;font-weight:800;margin-bottom:5px">Your interests</div>
+          <div style="font-size:13.5px;color:oklch(0.55 0.02 152);margin-bottom:14px">These drive who you match with. Tap to toggle.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:30px">
+            <sc-for list="{{ interestChips }}" as="chip" hint-placeholder-count="10">
+              <button onClick="{{ chip.toggle }}" style="border:1.5px solid {{ chip.border }};background:{{ chip.bg }};color:{{ chip.color }};font-size:13.5px;font-weight:700;padding:9px 15px;border-radius:999px;cursor:pointer;transition:all .12s;white-space:nowrap">{{ chip.label }}</button>
+            </sc-for>
+          </div>
+
+          <div style="font-size:18px;font-weight:800;margin-bottom:5px">Your competencies</div>
+          <div style="font-size:13.5px;color:oklch(0.55 0.02 152);margin-bottom:14px">Skills you bring — shared skills raise your compatibility.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:30px">
+            <sc-for list="{{ compChips }}" as="chip" hint-placeholder-count="8">
+              <button onClick="{{ chip.toggle }}" style="border:1.5px solid {{ chip.border }};background:{{ chip.bg }};color:{{ chip.color }};font-size:13.5px;font-weight:700;padding:9px 15px;border-radius:999px;cursor:pointer;transition:all .12s;white-space:nowrap">{{ chip.label }}</button>
+            </sc-for>
+          </div>
+
+          <button onClick="{{ saveProfile }}" style="border:none;background:oklch(0.70 0.16 145);color:#fff;font-size:15px;font-weight:800;padding:14px 28px;border-radius:14px;cursor:pointer;box-shadow:0 12px 26px -14px oklch(0.70 0.16 145 / .9)">Save profile</button>
+        </div>
+      </sc-if>
+
+    </div>
+  </sc-if>
+
+  <!-- ========= MATCH OVERLAY ========= -->
+  <sc-if value="{{ hasMatch }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:100;background:oklch(0.45 0.1 150 / .45);backdrop-filter:blur(7px);display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden">
+      <sc-for list="{{ confetti }}" as="piece" hint-placeholder-count="0">
+        <div style="{{ piece.style }}"></div>
+      </sc-for>
+      <div style="position:relative;width:420px;max-width:100%;background:#fff;border-radius:30px;padding:36px 34px;text-align:center;box-shadow:0 40px 90px -30px oklch(0.3 0.06 150 / .7);animation:dl-pop .45s cubic-bezier(.2,.9,.3,1.2) both">
+        <div style="font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.62 0.13 145)">It's a match</div>
+        <div style="font-size:29px;font-weight:900;letter-spacing:-.02em;margin-top:4px">You're compatible!</div>
+
+        <div style="display:flex;align-items:center;justify-content:center;margin:26px 0 22px">
+          <div style="width:84px;height:84px;border-radius:50%;background:oklch(0.70 0.16 145);color:#fff;font-weight:800;font-size:30px;display:flex;align-items:center;justify-content:center;border:4px solid #fff;box-shadow:0 8px 20px -8px oklch(0.3 0.06 150 / .5)">{{ me.initials }}</div>
+          <div style="width:84px;height:84px;border-radius:50%;background:{{ newMatch.accent }};color:#fff;font-weight:800;font-size:30px;display:flex;align-items:center;justify-content:center;border:4px solid #fff;margin-left:-18px;box-shadow:0 8px 20px -8px oklch(0.3 0.06 150 / .5)">{{ newMatch.initials }}</div>
+        </div>
+
+        <div style="font-size:16px;font-weight:700;color:oklch(0.4 0.02 152)">You and {{ newMatch.name }}</div>
+        <div style="font-size:64px;font-weight:900;color:oklch(0.6 0.16 145);letter-spacing:-.03em;line-height:1.05;margin-top:10px">{{ newMatch.score }}%</div>
+        <div style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.08 145);margin-top:-2px">compatible</div>
+        <div style="font-size:14px;color:oklch(0.5 0.02 152);line-height:1.5;margin:14px 0 22px;padding:0 6px">Because you share <span style="font-weight:700;color:oklch(0.36 0.05 150)">{{ newMatch.shareSummary }}</span>.</div>
+
+        <div style="background:oklch(0.97 0.015 145);border:1px solid oklch(0.9 0.02 150);border-radius:16px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;text-align:left">
+          <div style="min-width:0">
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:oklch(0.6 0.015 152)">Reach out on</div>
+            <div style="font-size:14px;font-weight:700;color:oklch(0.3 0.03 152);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ newMatch.teams }}</div>
+          </div>
+          <button onClick="{{ copyMatch }}" style="flex-shrink:0;border:1px solid oklch(0.85 0.06 145);background:#fff;color:oklch(0.42 0.1 145);font-size:13px;font-weight:800;padding:9px 14px;border-radius:10px;cursor:pointer">Copy</button>
+        </div>
+
+        <div style="display:flex;gap:10px">
+          <button onClick="{{ closeMatch }}" style="flex:1;border:1.5px solid oklch(0.88 0.02 150);background:#fff;color:oklch(0.35 0.02 152);font-size:15px;font-weight:800;padding:13px;border-radius:13px;cursor:pointer">Keep swiping</button>
+          <button onClick="{{ goMatches }}" style="flex:1;border:none;background:oklch(0.70 0.16 145);color:#fff;font-size:15px;font-weight:800;padding:13px;border-radius:13px;cursor:pointer">View matches</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ========= TOAST ========= -->
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:200;background:oklch(0.27 0.03 152);color:#fff;font-size:14px;font-weight:700;padding:12px 22px;border-radius:999px;box-shadow:0 14px 34px -14px oklch(0.3 0.06 150 / .7)">{{ toast }}</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.meSeed = {
+      name: "Jordan Avery", initials: "JA", role: "Senior Consultant",
+      serviceLine: "Strategy & Analytics", office: "Chicago, IL",
+      email: "jordan.avery@deloitter.com",
+      interests: ["Trail running","Specialty coffee","Generative AI","Board games","Live jazz","Mentoring","Cycling","Photography"],
+      competencies: ["Data storytelling","Python","Stakeholder facilitation","Tableau","Machine learning"]
+    };
+    this.allInterests = ["Trail running","Specialty coffee","Generative AI","Board games","Live jazz","Mentoring","Cycling","Photography","Travel","Cooking","Yoga","Gaming","Climbing","Volunteering","Reading"];
+    this.allCompetencies = ["Data storytelling","Python","Stakeholder facilitation","Tableau","Machine learning","Change management","Cloud architecture","UX research","Project management","Financial modeling"];
+    this.rawCandidates = [
+      { id:"maya", name:"Maya Chen", initials:"MC", role:"Manager", serviceLine:"Strategy & Analytics", office:"Chicago, IL", accent:"oklch(0.72 0.12 180)", likesMe:true,
+        interests:["Generative AI","Specialty coffee","Board games","Trail running","Live jazz"], competencies:["Python","Machine learning","Data storytelling"] },
+      { id:"aisha", name:"Aisha Karim", initials:"AK", role:"Senior Consultant", serviceLine:"Strategy & Analytics", office:"Seattle, WA", accent:"oklch(0.70 0.15 150)", likesMe:true,
+        interests:["Generative AI","Cycling","Live jazz","Mentoring","Specialty coffee"], competencies:["Machine learning","Python","Data storytelling","Tableau"] },
+      { id:"priya", name:"Priya Nair", initials:"PN", role:"Senior Manager", serviceLine:"Strategy & Analytics", office:"New York, NY", accent:"oklch(0.66 0.15 300)", likesMe:true,
+        interests:["Generative AI","Photography","Cooking","Live jazz"], competencies:["Machine learning","Python","Tableau"] },
+      { id:"devon", name:"Devon Brooks", initials:"DB", role:"Consultant", serviceLine:"Human Capital", office:"Atlanta, GA", accent:"oklch(0.78 0.13 70)", likesMe:true,
+        interests:["Cycling","Photography","Mentoring","Travel"], competencies:["Stakeholder facilitation","Change management"] },
+      { id:"sofia", name:"Sofia Reyes", initials:"SR", role:"Consultant", serviceLine:"Customer & Marketing", office:"Miami, FL", accent:"oklch(0.70 0.16 30)", likesMe:true,
+        interests:["Specialty coffee","Photography","Yoga","Travel"], competencies:["Data storytelling","UX research"] },
+      { id:"liam", name:"Liam O'Connor", initials:"LO", role:"Analyst", serviceLine:"Technology", office:"Austin, TX", accent:"oklch(0.66 0.13 250)", likesMe:false,
+        interests:["Board games","Gaming","Generative AI","Cycling"], competencies:["Python","Cloud architecture"] },
+      { id:"noah", name:"Noah Williams", initials:"NW", role:"Manager", serviceLine:"Risk & Financial Advisory", office:"Boston, MA", accent:"oklch(0.62 0.05 250)", likesMe:false,
+        interests:["Trail running","Mentoring","Board games"], competencies:["Stakeholder facilitation","Tableau"] },
+      { id:"marcus", name:"Marcus Bell", initials:"MB", role:"Consultant", serviceLine:"Technology", office:"Denver, CO", accent:"oklch(0.72 0.15 50)", likesMe:false,
+        interests:["Photography","Travel","Cooking"], competencies:["Cloud architecture","Python"] }
+    ];
+    const me = JSON.parse(JSON.stringify(this.meSeed));
+    this.state = {
+      screen: "login", cardStyle: "A", deckIndex: 0,
+      me, candidates: this.computeCandidates(me),
+      matches: [], newMatch: null, toast: null
+    };
+    this.dragging = false; this.startX = 0; this.startY = 0; this.dx = 0; this.dy = 0;
+  }
+
+  computeCandidates(me) {
+    const meAttrs = [...me.interests, ...me.competencies, "sl:" + me.serviceLine];
+    return this.rawCandidates.map(c => {
+      const cAttrs = [...c.interests, ...c.competencies, "sl:" + c.serviceLine];
+      const sharedAll = Array.from(new Set(meAttrs.filter(a => cAttrs.includes(a))));
+      const union = new Set([...meAttrs, ...cAttrs]);
+      const score = union.size ? Math.round(100 * sharedAll.length / union.size) : 0;
+      const sharedInterests = me.interests.filter(i => c.interests.includes(i));
+      const sharedComps = me.competencies.filter(i => c.competencies.includes(i));
+      const sameSL = c.serviceLine === me.serviceLine;
+      const sharedDisplay = [...sharedInterests, ...sharedComps, ...(sameSL ? ["Same service line"] : [])];
+      const more = Math.max(0, sharedDisplay.length - 3);
+      const shareSummary = sharedDisplay.slice(0, 3).join(", ") + (more > 0 ? " +" + more + " more" : "");
+      const slug = c.name.toLowerCase().replace(/[^a-z ]/g, "").trim().split(/\s+/);
+      const email = slug.join(".") + "@deloitter.com";
+      const teams = "@" + slug.join("");
+      const rots = ["-3deg","2deg","-2deg","3deg","-1.5deg"];
+      const stickerTags = sharedInterests.map((label, i) => ({ label, rot: rots[i % rots.length] }));
+      return { ...c, score, sharedInterests, sharedComps, sameSL, shareSummary, email, teams, stickerTags };
+    }).sort((a, b) => b.score - a.score);
+  }
+
+  getTop() { return this.state.candidates[this.state.deckIndex] || null; }
+
+  onPointerDown = (e) => {
+    if (this.state.newMatch || !this.getTop()) return;
+    const card = document.getElementById("dl-top-card");
+    if (!card) return;
+    this.dragging = true; this.startX = e.clientX; this.startY = e.clientY; this.dx = 0; this.dy = 0;
+    card.style.transition = "none"; card.style.cursor = "grabbing";
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {}
+  };
+  onPointerMove = (e) => {
+    if (!this.dragging) return;
+    const card = document.getElementById("dl-top-card");
+    if (!card) return;
+    this.dx = e.clientX - this.startX; this.dy = e.clientY - this.startY;
+    card.style.transform = "translate(" + this.dx + "px," + this.dy + "px) rotate(" + (this.dx * 0.05) + "deg)";
+    const like = card.querySelector(".dl-like-badge"), pass = card.querySelector(".dl-pass-badge");
+    if (like) like.style.opacity = Math.max(0, Math.min(1, this.dx / 110));
+    if (pass) pass.style.opacity = Math.max(0, Math.min(1, -this.dx / 110));
+  };
+  onPointerUp = () => {
+    if (!this.dragging) return;
+    this.dragging = false;
+    if (this.dx > 110) this.flyOff("like");
+    else if (this.dx < -110) this.flyOff("pass");
+    else this.springBack();
+  };
+  springBack() {
+    const card = document.getElementById("dl-top-card");
+    if (!card) return;
+    card.style.transition = "transform .35s cubic-bezier(.2,.8,.3,1)";
+    card.style.transform = "translate(0,0) rotate(0)"; card.style.cursor = "grab";
+    const l = card.querySelector(".dl-like-badge"), p = card.querySelector(".dl-pass-badge");
+    if (l) l.style.opacity = 0; if (p) p.style.opacity = 0;
+  }
+  flyOff(dir) {
+    const card = document.getElementById("dl-top-card");
+    if (card) {
+      const x = dir === "like" ? window.innerWidth : -window.innerWidth;
+      const rot = dir === "like" ? 24 : -24;
+      card.style.transition = "transform .42s ease-in, opacity .42s ease-in";
+      card.style.transform = "translate(" + x + "px,-50px) rotate(" + rot + "deg)";
+      card.style.opacity = "0";
+    }
+    setTimeout(() => this.commit(dir === "like"), 300);
+  }
+  commit(liked) {
+    const cand = this.getTop();
+    let matches = this.state.matches, newMatch = null;
+    if (liked && cand && cand.likesMe && !matches.some(m => m.id === cand.id)) {
+      matches = [...matches, cand]; newMatch = cand;
+    }
+    this.setState({ deckIndex: this.state.deckIndex + 1, matches, newMatch });
+  }
+  likeBtn = () => { if (this.state.newMatch || !this.getTop()) return; this.flyOff("like"); };
+  passBtn = () => { if (this.state.newMatch || !this.getTop()) return; this.flyOff("pass"); };
+
+  setToast(msg) {
+    this.setState({ toast: msg });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ toast: null }), 1900);
+  }
+  copyText(t) { try { navigator.clipboard && navigator.clipboard.writeText(t); } catch (_) {} this.setToast("Copied " + t); }
+
+  toggleAttr(kind, label) {
+    const me = JSON.parse(JSON.stringify(this.state.me));
+    const arr = me[kind];
+    const i = arr.indexOf(label);
+    if (i >= 0) arr.splice(i, 1); else arr.push(label);
+    this.setState({ me, candidates: this.computeCandidates(me) });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const me = s.me;
+    const showApp = s.screen !== "login";
+    const top = this.getTop();
+    const cands = s.candidates;
+    const chip = (label, on) => ({
+      label, selected: on,
+      bg: on ? "oklch(0.70 0.16 145)" : "#fff",
+      color: on ? "#fff" : "oklch(0.42 0.02 152)",
+      border: on ? "oklch(0.70 0.16 145)" : "oklch(0.88 0.02 150)"
+    });
+    const palette = ["oklch(0.70 0.16 145)","oklch(0.78 0.13 70)","oklch(0.66 0.15 300)","oklch(0.70 0.16 30)","oklch(0.72 0.12 180)"];
+    const confetti = s.newMatch ? Array.from({ length: 18 }).map((_, i) => {
+      const left = (i * 5.4 + 2).toFixed(1) + "%";
+      const size = (8 + (i % 3) * 4);
+      const bg = palette[i % palette.length];
+      const dur = (1.5 + (i % 4) * 0.3).toFixed(2) + "s";
+      const delay = ((i % 6) * 0.12).toFixed(2) + "s";
+      const radius = i % 2 ? "50%" : "2px";
+      return { style: "position:absolute;top:-30px;left:" + left + ";width:" + size + "px;height:" + size + "px;background:" + bg + ";border-radius:" + radius + ";animation:dl-confetti " + dur + " ease-in " + delay + " forwards" };
+    }) : [];
+
+    return {
+      isLogin: s.screen === "login", showApp,
+      isSwipe: s.screen === "swipe", isMatches: s.screen === "matches", isProfile: s.screen === "profile",
+      tabSwipe: s.screen === "swipe", tabMatches: s.screen === "matches", tabProfile: s.screen === "profile",
+      me,
+      login: () => this.setState({ screen: "swipe" }),
+      navSwipe: () => this.setState({ screen: "swipe" }),
+      navMatches: () => this.setState({ screen: "matches" }),
+      navProfile: () => this.setState({ screen: "profile" }),
+
+      cardStyle: s.cardStyle,
+      styleA: s.cardStyle === "A", styleB: s.cardStyle === "B", styleC: s.cardStyle === "C",
+      styleANot: s.cardStyle !== "A", styleBNot: s.cardStyle !== "B", styleCNot: s.cardStyle !== "C",
+      setStyleA: () => this.setState({ cardStyle: "A" }),
+      setStyleB: () => this.setState({ cardStyle: "B" }),
+      setStyleC: () => this.setState({ cardStyle: "C" }),
+
+      top, topExists: !!top, deckEmpty: !top,
+      remaining: cands.length - s.deckIndex,
+      back1Exists: !!cands[s.deckIndex + 1], back2Exists: !!cands[s.deckIndex + 2],
+      onPointerDown: this.onPointerDown, onPointerMove: this.onPointerMove, onPointerUp: this.onPointerUp,
+      likeBtn: this.likeBtn, passBtn: this.passBtn,
+
+      hasMatch: !!s.newMatch, newMatch: s.newMatch || {},
+      closeMatch: () => this.setState({ newMatch: null }),
+      goMatches: () => this.setState({ newMatch: null, screen: "matches" }),
+      copyMatch: () => { if (s.newMatch) this.copyText(s.newMatch.teams); },
+
+      matchItems: s.matches.map(m => ({ ...m, copy: () => this.copyText(m.teams) })),
+      hasMatches: s.matches.length > 0, noMatches: s.matches.length === 0, matchCount: s.matches.length,
+
+      interestChips: this.allInterests.map(l => { const c = chip(l, me.interests.includes(l)); c.toggle = () => this.toggleAttr("interests", l); return c; }),
+      compChips: this.allCompetencies.map(l => { const c = chip(l, me.competencies.includes(l)); c.toggle = () => this.toggleAttr("competencies", l); return c; }),
+      saveProfile: () => this.setToast("Profile updated"),
+
+      confetti,
+      toast: s.toast, hasToast: !!s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>
