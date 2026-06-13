@@ -4,7 +4,7 @@
     Deploy context/foundation/roadmap.md slices as ordered, linked GitHub issues.
 
 .DESCRIPTION
-    Reads the manifest at .github/roadmap-issues.psd1 (a machine mirror of the roadmap),
+    Reads the manifest at .github/roadmap-issues.json (a machine mirror of the roadmap),
     then creates labels, one milestone per stream, and one issue per roadmap item -
     wiring `Blocked by` / `Blocks` dependency links between them.
 
@@ -20,7 +20,7 @@
     owner/repo override. Defaults to the GitHub slug parsed from `git remote get-url origin`.
 
 .PARAMETER ManifestPath
-    Path to the manifest. Defaults to .github/roadmap-issues.psd1 next to this repo root.
+    Path to the manifest. Defaults to .github/roadmap-issues.json next to this repo root.
 
 .EXAMPLE
     pwsh -File scripts/deploy-roadmap-issues.ps1 -DryRun
@@ -39,15 +39,40 @@ $ErrorActionPreference = 'Stop'
 # --- Paths -------------------------------------------------------------------
 $RepoRoot   = Resolve-Path (Join-Path $PSScriptRoot '..')
 $OutDir     = Join-Path $RepoRoot '.github/roadmap-issues'
-if (-not $ManifestPath) { $ManifestPath = Join-Path $RepoRoot '.github/roadmap-issues.psd1' }
+if (-not $ManifestPath) { $ManifestPath = Join-Path $RepoRoot '.github/roadmap-issues.json' }
 
 function Write-Step { param([string]$m) Write-Host "==> $m" -ForegroundColor Cyan }
 function Write-Info { param([string]$m) Write-Host "    $m" -ForegroundColor DarkGray }
 
 # --- Preflight ---------------------------------------------------------------
 if (-not (Test-Path $ManifestPath)) { throw "Manifest not found: $ManifestPath" }
-$manifest = Import-PowerShellDataFile -Path $ManifestPath
-$items    = $manifest.Items
+$raw      = Get-Content -Raw -Path $ManifestPath | ConvertFrom-Json
+# Normalize JSON object to hashtable-like access for downstream code
+$manifest = @{
+    RoadmapVersion = $raw.roadmapVersion
+    Streams        = @{}
+    Items          = @()
+}
+foreach ($prop in $raw.streams.PSObject.Properties) { $manifest.Streams[$prop.Name] = $prop.Value }
+foreach ($item in $raw.items) {
+    $manifest.Items += @{
+        Id        = $item.id
+        ChangeId  = $item.changeId
+        Type      = $item.type
+        Stream    = $item.stream
+        Title     = $item.title
+        Outcome   = $item.outcome
+        PrdRefs   = $item.prdRefs
+        Status    = $item.status
+        PlanReady = $item.planReady
+        NorthStar = $item.northStar
+        Prereqs   = @($item.prereqs)
+        Parallel  = @($item.parallel)
+        Risk      = $item.risk
+        Guardrail = $item.guardrail
+    }
+}
+$items = $manifest.Items
 if (-not $items) { throw "Manifest has no Items." }
 
 if (-not $DryRun) {
@@ -89,6 +114,7 @@ $labelDefs = @(
     @{ name = 'stream:C';        color = 'FBCA04'; desc = 'Stream C - Profile maintenance' }
     @{ name = 'status:ready';    color = '0E8A16'; desc = 'Ready for /10x-plan' }
     @{ name = 'status:proposed'; color = 'C2E0C6'; desc = 'Proposed; prerequisites pending' }
+    @{ name = 'status:done';     color = '6F42C1'; desc = 'Slice completed and archived' }
     @{ name = 'north-star';      color = 'D93F0B'; desc = 'North-star validation milestone' }
     @{ name = 'plan:ready';      color = '006B75'; desc = 'Ready to run /10x-plan now' }
 )

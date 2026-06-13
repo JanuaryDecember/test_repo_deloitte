@@ -1,7 +1,7 @@
 ## S-05 · `edit-interests`
 
 > Auto-generated from `context/foundation/roadmap.md` (v1).
-> The roadmap is the source of truth - edit it, update `.github/roadmap-issues.psd1`, then re-run the deploy.
+> The roadmap is the source of truth - edit it, update `.github/roadmap-issues.json`, then re-run the deploy.
 
 **Outcome:** User can edit their interests/competencies after initial setup, changing the inputs that drive their future matches.
 
@@ -13,7 +13,7 @@
 | Status | proposed |
 
 ### Dependencies
-- **Blocked by:** #5
+- **Blocked by:** `S-02`
 - **Blocks:** none
 - **Parallel with:** `S-03`, `S-04`
 
@@ -24,8 +24,8 @@ Nice-to-have (FR-007) - PRD says build only if the core flow is done. Low risk; 
 - [ ] Outcome above is demonstrable end-to-end on seeded data
 - [ ] PRD refs satisfied: FR-007
 
+
 ### Next step
 Run `/10x-plan edit-interests` -> produces `context/changes/edit-interests/plan.md`.
 
-<!-- roadmap-id: S-05 | change-id: edit-interests | managed-by: deploy-roadmap-issues.ps1 -->
-
+<!-- roadmap-id: S-05 | change-id: edit-interests | managed-by: deploy-roadmap-issues.sh -->

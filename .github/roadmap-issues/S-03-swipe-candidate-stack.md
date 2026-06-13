@@ -1,7 +1,7 @@
 ## S-03 · `swipe-candidate-stack`
 
 > Auto-generated from `context/foundation/roadmap.md` (v1).
-> The roadmap is the source of truth - edit it, update `.github/roadmap-issues.psd1`, then re-run the deploy.
+> The roadmap is the source of truth - edit it, update `.github/roadmap-issues.json`, then re-run the deploy.
 
 **Outcome:** User can view candidate employees one card at a time (each card shows shared interests/competencies; the compatibility score is HIDDEN here) and swipe like or pass; the stack is ordered highest-compatibility-first and transitions feel instant.
 
@@ -13,8 +13,8 @@
 | Status | proposed |
 
 ### Dependencies
-- **Blocked by:** #2, #5
-- **Blocks:** #7
+- **Blocked by:** `F-01`, `S-02`
+- **Blocks:** `S-04`
 - **Parallel with:** `S-05`
 
 ### Why / risk
@@ -28,5 +28,4 @@ Heaviest slice and backend-investment focus: introduces swipe persistence and th
 ### Next step
 Run `/10x-plan swipe-candidate-stack` -> produces `context/changes/swipe-candidate-stack/plan.md`.
 
-<!-- roadmap-id: S-03 | change-id: swipe-candidate-stack | managed-by: deploy-roadmap-issues.ps1 -->
-
+<!-- roadmap-id: S-03 | change-id: swipe-candidate-stack | managed-by: deploy-roadmap-issues.sh -->
