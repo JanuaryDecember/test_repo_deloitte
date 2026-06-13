@@ -1,7 +1,7 @@
 ---
 change_id: "select-interests"
 roadmap_id: "S-02"
-status: revised
+status: implemented
 created: 2026-06-13
 prd_refs: [FR-002]
 prerequisites: [F-01 persistence-and-seed, S-01 employee-login]
