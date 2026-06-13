@@ -41,24 +41,25 @@ This slice does NOT introduce:
 
 #### Backend
 
-- [ ] Create `backend/docker-compose.yml` with a `postgres` service:
+- [x] Create `backend/docker-compose.yml` with a `postgres` service:
   - Image: `postgres:16-alpine`
   - Port: `5432:5432`
-  - Environment: `POSTGRES_DB=deloitter`, `POSTGRES_USER=deloitter`, `POSTGRES_PASSWORD=deloitter`
+  - Environment: `POSTGRES_DB=appdb`, `POSTGRES_USER=postgres`, `POSTGRES_PASSWORD=postgres` *(credentials adjusted to match user's running Podman container)*
   - Volume: named volume `pgdata` for persistence across restarts
-- [ ] Add dependencies to `backend/pom.xml`:
+- [x] Add dependencies to `backend/pom.xml`:
   - `spring-boot-starter-data-jpa`
   - `org.postgresql:postgresql` (runtime scope)
   - `org.flywaydb:flyway-core`
   - `org.flywaydb:flyway-database-postgresql` (Flyway's Postgres module)
   - `spring-boot-docker-compose` (runtime scope) — auto-starts Docker Compose services on `spring-boot:run`, removing the manual `docker compose up -d` prerequisite
-- [ ] Configure `backend/src/main/resources/application.properties`:
-  - `spring.datasource.url=jdbc:postgresql://localhost:5432/deloitter`
-  - `spring.datasource.username=deloitter`
-  - `spring.datasource.password=deloitter`
+- [x] Configure `backend/src/main/resources/application.properties`:
+  - `spring.datasource.url=jdbc:postgresql://localhost:5432/appdb`
+  - `spring.datasource.username=postgres`
+  - `spring.datasource.password=postgres`
   - `spring.jpa.hibernate.ddl-auto=validate` (Flyway owns the schema)
   - `spring.jpa.open-in-view=false`
   - `spring.flyway.enabled=true`
+  - `spring.docker.compose.enabled=false` *(added: Podman env — Postgres started manually)*
 
 #### Frontend
 
@@ -66,8 +67,8 @@ This slice does NOT introduce:
 
 #### Verification
 
-- [ ] Run `docker compose up -d` in `backend/` — Postgres container starts and accepts connections on port 5432.
-- [ ] Run `.\mvnw.cmd spring-boot:run` — app starts without connection errors. Flyway initializes (no migrations to apply yet, but no failure). With `spring-boot-docker-compose` on the classpath, the Docker Compose services auto-start so `docker compose up -d` is optional for subsequent runs.
+- [x] Run `docker compose up -d` in `backend/` — Postgres container starts and accepts connections on port 5432. *(Podman: started manually with equivalent `podman run` flags)*
+- [x] Run `.\mvnw.cmd spring-boot:run` — app starts without connection errors. Flyway initializes (no migrations to apply yet, but no failure). With `spring-boot-docker-compose` on the classpath, the Docker Compose services auto-start so `docker compose up -d` is optional for subsequent runs. *(Verified: `Started DeloitterApplication in 1.222 seconds`, HikariPool connected, Postgres 16.14)*
 
 ---
 

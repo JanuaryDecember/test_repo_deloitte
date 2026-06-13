@@ -10,22 +10,20 @@ Where `<change-id>` is the Change ID column from `context/foundation/roadmap.md`
 
 ## Purpose
 
-Systematically review a completed implementation (`implementation-report.md` + actual code changes) in `context/changes/<change-id>/` against the plan, PRD guardrails, tech-stack conventions, and code quality standards. Classify each finding by severity, ask the user whether to fix or clarify, and persist the review results.
+Systematically review a completed implementation (actual code in the repo) against the plan, PRD guardrails, tech-stack conventions, and code quality standards. Classify each finding by severity, ask the user whether to fix or clarify, and present all results **inline as a diff** — no report file is written.
 
 ## Inputs (read before reviewing)
 
-1. **The implementation report:** `context/changes/<change-id>/implementation-report.md`
-2. **The plan:** `context/changes/<change-id>/plan.md` — the authoritative spec of what should have been built.
-3. **The plan brief:** `context/changes/<change-id>/plan-brief.md`
-4. **Plan review (if exists):** `context/changes/<change-id>/review/plan-review.md` — any warnings or notes from the plan review that implementation should have heeded.
-5. **PRD:** `context/foundation/prd.md` — product requirements, guardrails, business logic.
-6. **Roadmap:** `context/foundation/roadmap.md` — slice definition, outcome, prerequisites.
-7. **Backend tech stack:** `backend/context/foundation/tech-stack.md`
-8. **Frontend tech stack:** `frontend/context/foundation/tech-stack.md`
-9. **Backend conventions:** `backend/AGENTS.md`
-10. **Frontend conventions:** `frontend/AGENTS.md`
-11. **Actual code:** read every file listed in the implementation report's "Files Created/Modified" section. This is the primary artifact under review.
-12. **Existing reviews (if re-running):** `context/changes/<change-id>/review/implementation-review.md` — if it exists, this is a re-review; note delta from the previous review.
+1. **The plan:** `context/changes/<change-id>/plan.md` — the authoritative spec of what should have been built.
+2. **The plan brief:** `context/changes/<change-id>/plan-brief.md`
+3. **Plan review (if exists):** `context/changes/<change-id>/review/plan-review.md` — any warnings or notes from the plan review that implementation should have heeded.
+4. **PRD:** `context/foundation/prd.md` — product requirements, guardrails, business logic.
+5. **Roadmap:** `context/foundation/roadmap.md` — slice definition, outcome, prerequisites.
+6. **Backend tech stack:** `backend/context/foundation/tech-stack.md`
+7. **Frontend tech stack:** `frontend/context/foundation/tech-stack.md`
+8. **Backend conventions:** `backend/AGENTS.md`
+9. **Frontend conventions:** `frontend/AGENTS.md`
+10. **Actual code:** discovered via `git diff` (see Pre-flight). Read every file that was added or modified as part of this change. This is the primary artifact under review.
 
 ## Review Checklist
 
@@ -58,18 +56,12 @@ Evaluate the implementation against these dimensions:
 - Is code properly formatted, no dead code, no commented-out blocks, no unresolved TODOs?
 - Are imports clean (no unused imports, no wildcard imports in Java unless conventional)?
 
-### 5. Verification Integrity
-- Do the verification results in the implementation report match what the plan required?
-- Are the `✅` results plausible given the code written (no "passed" steps that look unimplementable)?
-- Did both `.\mvnw.cmd clean package` and `npm run build` pass cleanly?
-- Were any failed verifications appropriately escalated or resolved?
+### 5. Coverage Completeness
+- Does every `- [ ]` checklist item in the plan have a corresponding file/class/method in the codebase?
+- Are there plan-specified files that simply don't exist yet?
+- Are there plan-specified test cases that are missing or stubbed out?
 
-### 6. Report Accuracy
-- Does the "Files Created/Modified" list in the report match actual code changes?
-- Are deviations and issues accurately described (not minimised or omitted)?
-- Is the `result` field (`SUCCESS` / `PARTIAL` / `FAILED`) consistent with the actual outcomes reported?
-
-### 7. Security & Data Hygiene (POC scope)
+### 6. Security & Data Hygiene (POC scope)
 - No real credentials or PII hardcoded in source files.
 - Seeded demo data is clearly fictional.
 - No endpoints that inadvertently expose private match intent before mutual confirmation.
@@ -82,76 +74,57 @@ Each finding gets one of:
 |----------|---------|--------|
 | 🔴 **Critical** | Violates a PRD guardrail, introduces a security flaw, or leaves the feature fundamentally broken. | Must fix before the slice is considered done. |
 | 🟠 **Major** | Significant gap vs. the plan, incorrect technical approach, or test coverage so thin the feature is unverifiable. | Should fix; ask user for confirmation. |
-| 🟡 **Minor** | Convention violation, small inaccuracy, misleading report entry, or missing edge-case handling that won't break the happy path. | Suggest fix; user may defer. |
+| 🟡 **Minor** | Convention violation, small inaccuracy, or missing edge-case handling that won't break the happy path. | Suggest fix; user may defer. |
 | 🔵 **Suggestion** | Improvement idea, refactoring opportunity, or best-practice recommendation — not a defect. | Optional; record for consideration. |
 
 ## Process
 
 ### Step 1: Pre-flight
 
-1. Confirm `implementation-report.md` exists and has `result: SUCCESS | PARTIAL`. If missing, stop (see Failure modes).
-2. Read all inputs listed above — plan, implementation report, and every file in "Files Created/Modified".
-3. Build a list of phases from `plan.md` to review sequentially.
+1. **Discover changed files** by running `git diff --name-only HEAD~1 HEAD` (or `git diff --name-only <base>` if the user specifies a base commit). If git history is unavailable, ask the user which files were added/modified.
+2. **Check plan status.** Read `plan.md` frontmatter — `status` should be `implemented`. If it is still `revised` or `approved`, warn the user that the plan may not have been implemented yet and ask whether to proceed.
+3. **Read all inputs** — plan, plan review (if exists), and every changed file discovered in step 1.
+4. **Build a list of phases** from `plan.md` to review sequentially.
 
 ### Step 2: Review phase-by-phase
 
 For each phase in the plan (Phase 1, Phase 2, …, Phase N), in order:
 
 #### 2a. Check plan faithfulness for the phase
-- Verify every `- [ ]` checklist item in the phase has a corresponding implementation in the listed files.
+- Verify every `- [ ]` checklist item in the phase has a corresponding implementation in the changed files.
 - Confirm file paths, class names, endpoint paths, and component names match the plan.
 - Note any undocumented deviations.
 
 #### 2b. Check technical correctness for the phase
 - Read the actual code for files created/modified in this phase.
-- Apply dimensions 3 (Technical Correctness), 4 (Convention Adherence), and 7 (Security & Data Hygiene) to the phase's code.
+- Apply dimensions 3 (Technical Correctness), 4 (Convention Adherence), and 6 (Security & Data Hygiene) to the phase's code.
 
-#### 2c. Check phase verification results
-- Confirm the verification steps listed in the plan's `#### Verification` section for that phase are present in the implementation report.
-- Assess whether the reported `✅` outcomes are plausible given the code (no "passed" steps that look unimplementable).
-- Flag any phase whose verification was skipped, failed without resolution, or appears inconsistent with the code.
+#### 2c. Check coverage completeness for the phase
+- Cross-reference the plan's `#### Verification` section for this phase against the actual code.
+- Confirm that any files, classes, or tests the plan required to exist do in fact exist.
+- Flag anything the plan specified that is absent from the codebase.
 
 #### 2d. Collect findings for the phase
 - Record all findings from 2a–2c, tagged with the phase number.
 - **Present phase findings to the user immediately** (don't batch all phases before asking):
   - For 🔴 Critical or 🟠 Major: ask whether to fix, acknowledge, or override.
   - For 🟡 Minor and 🔵 Suggestion: present as a batch for the phase and ask whether to apply.
+- For any approved fix, **show the change as a unified diff** (`--- before` / `+++ after` format) before applying it to the file.
 - Apply any approved fixes before moving to the next phase.
 
-### Step 3: Review integration & smoke test
+#### 2e. Write phase summary
+After findings are resolved (fixes applied or declined), save a summary to:
+`context/changes/<change-id>/review/impl-review-phase-<N>.md`
 
-After all phases, review the `## Integration & Smoke Test` section:
-- Were all integration checklist items executed and reported?
-- Do the results align with the code (e.g., if a curl check is marked ✅, does the endpoint actually exist)?
-- Were guardrail checks performed (if the slice touches privacy/scoring)?
-
-### Step 4: Review deployability results
-
-Check the final deployability section of the implementation report:
-- Did `.\mvnw.cmd clean package` pass? Does this match the code (no obvious compile errors in review)?
-- Did `npm run build` pass? Does this match the TypeScript/component code?
-
-### Step 5: Full cross-cutting review
-
-After the phase-by-phase pass, evaluate the remaining dimensions holistically:
-- **Dimension 6 (Report Accuracy):** Is the report's overall `result` consistent with the phase outcomes?
-- **Plan review cross-reference:** If `review/plan-review.md` exists, confirm every flagged concern was addressed.
-- Collect any cross-cutting findings and present them to the user.
-
-### Step 6: Write the review report
-
-Save to `context/changes/<change-id>/review/implementation-review.md` (template in Output section below).
-
-## Output
-
-Create (or overwrite) `context/changes/<change-id>/review/implementation-review.md`:
+Use this template:
 
 ```markdown
 ---
 change_id: "<change-id>"
+phase: <N>
+phase_name: "<phase name>"
 reviewed: <today YYYY-MM-DD>
-implementation_result_before: <SUCCESS | PARTIAL | FAILED>
-implementation_result_after: <SUCCESS | PARTIAL | FAILED>
+verdict: PASS | PASS WITH NOTES | REWORK
 findings_total: <N>
 critical: <N>
 major: <N>
@@ -160,80 +133,124 @@ suggestions: <N>
 fixes_applied: <N>
 ---
 
-# Implementation Review: <Outcome title>
+# Phase <N> Review: <phase name>
 
 ## Summary
+<2-3 sentences>
 
-<2-3 sentence overview: is the implementation correct and complete? What's the main concern, if any?>
-
-## Phase-by-Phase Results
-
-| # | Phase | Plan Faithfulness | Verification Results | Findings | Status |
-|---|-------|-------------------|----------------------|----------|--------|
-| 1 | <name> | ✅ / ⚠️ / ❌ | ✅ / ⚠️ / ❌ | <count or "none"> | ✅ Pass / ⚠️ Partial / ❌ Fail |
-| 2 | <name> | ✅ / ⚠️ / ❌ | ✅ / ⚠️ / ❌ | <count or "none"> | ✅ / ⚠️ / ❌ |
-| ... | ... | ... | ... | ... | ... |
+## Plan Faithfulness
+| Checklist item | Status |
+|---|---|
+| <item> | ✅ / ❌ / ⚠️ |
 
 ## Findings
 
-### 🔴 Critical
+### 🔴 Critical / 🟠 Major / 🟡 Minor / 🔵 Suggestions
+(omit empty tiers)
 
-| # | Phase | Dimension | File / Location | Finding | Resolution |
-|---|-------|-----------|-----------------|---------|------------|
-| 1 | <Ph N or "Integration"> | <dimension> | <file:line or "N/A"> | <description of the issue> | <fixed / acknowledged / overridden by user / N/A> |
-
-### 🟠 Major
-
-| # | Phase | Dimension | File / Location | Finding | Resolution |
-|---|-------|-----------|-----------------|---------|------------|
-| 1 | <Ph N or "Integration"> | <dimension> | <file:line or "N/A"> | <description> | <resolution> |
-
-### 🟡 Minor
-
-| # | Phase | Dimension | File / Location | Finding | Resolution |
-|---|-------|-----------|-----------------|---------|------------|
-| 1 | <Ph N or "Integration"> | <dimension> | <file:line or "N/A"> | <description> | <resolution> |
-
-### 🔵 Suggestions
-
-| # | Phase | Dimension | File / Location | Finding | Resolution |
-|---|-------|-----------|-----------------|---------|------------|
-| 1 | <Ph N or "Integration"> | <dimension> | <file:line or "N/A"> | <description> | <resolution> |
-
-## Fixes Applied
-
-<List of changes made to source files and/or implementation-report.md, if any. Quote the before/after or describe the edit.>
+| # | Dimension | File / Location | Finding | Resolution |
+|---|-----------|-----------------|---------|------------|
 
 ## Guardrail Compliance
-
 | Guardrail | Status | Evidence |
 |-----------|--------|----------|
-| No rejection signals | ✅ / ❌ / ⚠️ | <pointer to relevant code or "N/A for this slice"> |
-| Explainable score | ✅ / ❌ / ⚠️ / N/A | <pointer to scoring logic or "N/A"> |
-| Score hidden while swiping | ✅ / ❌ / ⚠️ / N/A | <pointer to relevant code or "N/A"> |
+| No rejection signals      | ✅/❌/⚠️/N/A | ... |
+| Explainable score         | ✅/❌/⚠️/N/A | ... |
+| Score hidden while swiping| ✅/❌/⚠️/N/A | ... |
 
 ## Verdict
+**<PASS | PASS WITH NOTES | REWORK>** — <brief justification>
+```
 
-**Status:** <PASS — implementation is correct and complete | PASS WITH NOTES — functional but watch the noted items | REWORK — must fix critical/major issues before the slice is done>
+### Step 3: Integration & smoke test coverage
 
-<Brief justification for the verdict.>
+After all phases, check the plan's `## Integration & Smoke Test` section:
+- Does the code support every integration check listed (i.e., do the required endpoints, components, and DB state exist)?
+- Were guardrail-relevant paths implemented correctly (if the slice touches privacy/scoring)?
+
+### Step 4: Run deployability check
+
+Run a quick deployability check against the changed tiers:
+
+**Backend (if backend files changed):**
+```bash
+cd backend && ./mvnw clean package -q
+```
+
+**Frontend (if frontend files changed):**
+```bash
+cd frontend && npm run build
+```
+
+Report the results inline. If either fails, flag as 🔴 Critical and diagnose the error.
+
+### Step 5: Full cross-cutting review
+
+After the phase-by-phase pass, evaluate holistically:
+- **Plan review cross-reference:** If `review/plan-review.md` exists, confirm every flagged concern was addressed in the code.
+- Collect any cross-cutting findings and present them to the user.
+
+### Step 6: Present final verdict inline
+
+After all phases are reviewed, output the verdict **directly in the conversation**. Per-phase summaries have already been written to `context/changes/<change-id>/review/impl-review-phase-<N>.md` during Step 2e. Use this structure for the overall inline verdict:
+
+```
+## Review: <change-id> — <Outcome title>
+
+### Summary
+<2-3 sentence overview>
+
+### Phase-by-Phase Results
+| # | Phase | Plan Faithfulness | Coverage | Findings | Status |
+|---|-------|-------------------|----------|----------|--------|
+| 1 | ...   | ✅/⚠️/❌          | ✅/⚠️/❌ | N        | ✅/⚠️/❌ |
+
+### Findings
+(tables per severity — omit empty severity tiers)
+
+### Guardrail Compliance
+| Guardrail | Status | Evidence |
+|-----------|--------|----------|
+| No rejection signals      | ✅/❌/⚠️ | ... |
+| Explainable score         | ✅/❌/⚠️/N/A | ... |
+| Score hidden while swiping| ✅/❌/⚠️/N/A | ... |
+
+### Deployability
+| Tier | Command | Result |
+|------|---------|--------|
+| Backend  | `./mvnw clean package` | ✅/❌ |
+| Frontend | `npm run build`        | ✅/❌ |
+
+### Verdict
+**Status:** PASS | PASS WITH NOTES | REWORK
+<Brief justification>
+```
+
+For every fix that was applied, include a `### Fixes Applied` section listing each change as a unified diff:
+
+```diff
+--- a/path/to/file
++++ b/path/to/file
+@@ -10,6 +10,7 @@
+ unchanged context
+-removed line
++added line
+ unchanged context
 ```
 
 ## Rules
 
-1. **Review phase-by-phase, not all at once.** Mirror the implement skill's phase-by-phase discipline — review each phase's code and verification results before moving to the next. Present findings per phase so the user can approve fixes incrementally. Don't batch everything to the end.
+1. **Review phase-by-phase, not all at once.** Review each phase's code before moving to the next. Present findings per phase so the user can approve fixes incrementally.
 
-2. **Read the code, don't just read the report.** The implementation report is self-reported — verify its claims against the actual source files.
+2. **Read the code directly.** The source of truth is the actual files in the repo — not any external report. Use `git diff` to discover what changed; read each changed file fully.
 
-2. **Respect the "hackathon POC" context.** Don't flag acceptable POC shortcuts (e.g., hardcoded demo passwords, simplified error handling, in-memory state) as defects unless they violate guardrails or break functionality.
+3. **Respect the "hackathon POC" context.** Don't flag acceptable POC shortcuts (e.g., hardcoded demo passwords, simplified error handling, in-memory state) as defects unless they violate guardrails or break functionality.
 
-3. **Don't invent requirements.** Only flag missing things if they're explicitly in the plan, PRD, or tech-stack docs. Don't add scope.
+4. **Don't invent requirements.** Only flag missing things if they're explicitly in the plan, PRD, or tech-stack docs. Don't add scope.
 
-4. **Ask before fixing.** Never silently change code — always present findings and get user confirmation before editing source files.
+5. **Ask before fixing.** Never silently change code — always present the diff and get user confirmation before applying it to source files.
 
-5. **Update implementation report status.** If fixes are applied, update the `result` field in `implementation-report.md`. If the verdict is PASS or PASS WITH NOTES and no critical/major issues remain, add a note that the slice has been reviewed.
-
-6. **Idempotent re-runs.** If `review/implementation-review.md` already exists, treat this as a re-review. Note which previous findings are resolved and which persist.
+6. **Per-phase summaries only.** Write `context/changes/<change-id>/review/impl-review-phase-<N>.md` after each phase (Step 2e). Do not write any other files — the overall verdict is presented inline in the conversation.
 
 7. **Cross-reference the plan review.** If `review/plan-review.md` exists, check that any warnings it flagged were addressed during implementation. Flag as 🟠 Major if a known plan-review concern was ignored.
 
@@ -243,20 +260,15 @@ fixes_applied: <N>
 /deloitter-implement-review persistence-and-seed
 ```
 
-Reads `context/changes/persistence-and-seed/implementation-report.md`, reads every file listed in it, reviews against `plan.md` and PRD guardrails, asks the user about findings, applies approved fixes, and writes:
-- `context/changes/persistence-and-seed/review/implementation-review.md`
+Runs `git diff` to discover changed files, reads `context/changes/persistence-and-seed/plan.md` and all changed source files, reviews against the plan and PRD guardrails, asks the user about findings, shows approved fixes as diffs, runs deployability checks, writes a summary to `context/changes/persistence-and-seed/review/impl-review-phase-<N>.md` after each phase, and presents the final verdict inline in the conversation.
 
 ## Failure modes
 
 | Situation | Action |
 |-----------|--------|
-| `implementation-report.md` does not exist | Stop — implementation hasn't been run yet. Suggest running `/deloitter-implement <change-id>` first. |
-| Report lists files that don't exist in the codebase | Flag as 🔴 Critical — the implementation is incomplete or the report is wrong. |
-| All verifications in the report are `✅` but code has obvious bugs | Flag as 🟠 Major — verifications may have been recorded incorrectly. |
+| `plan.md` does not exist | Stop — there is no spec to review against. |
+| `plan.md` status is not `implemented` | Warn — implementation may be incomplete. Ask whether to proceed. |
+| `git diff` is unavailable and user can't list changed files | Ask the user to provide the list of files added/modified for this change. |
+| A plan-specified file is absent from the codebase | Flag as 🟠 Major — the implementation is incomplete. |
 | A guardrail violation is found in code | Flag as 🔴 Critical — must fix before the slice is done, regardless of user preference. |
-| Re-review with no new findings vs. last review | State "no new findings since last review" and confirm the previous verdict still holds. |
-
-
-
-
-
+| Deployability check fails | Flag as 🔴 Critical — diagnose and present fix as a diff. |

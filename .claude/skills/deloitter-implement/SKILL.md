@@ -66,7 +66,7 @@ If a verification step **fails**:
 1. Read the error output carefully.
 2. Diagnose and fix the issue (in the code just written, NOT by changing the plan).
 3. Re-run the verification.
-4. If stuck after 3 attempts on the same error, log the issue in the implementation report and move on (or ask the user).
+4. If stuck after 3 attempts on the same error, log the issue as a comment in the conversation and move on (or ask the user).
 
 ### Step 3: Integration & smoke test
 
@@ -96,128 +96,48 @@ npm run build
 
 Both must pass with **zero errors** for the implementation to be considered complete.
 
-### Step 5: Write implementation report
-
-Create `context/changes/<change-id>/implementation-report.md`:
-
-```markdown
----
-change_id: "<change-id>"
-roadmap_id: "<F-xx or S-xx>"
-implemented: <today YYYY-MM-DD>
-plan_status: <status from plan frontmatter>
-result: <SUCCESS | PARTIAL | FAILED>
----
-
-# Implementation Report: <Outcome title>
-
-## Summary
-
-<2-3 sentences: what was implemented, whether it's fully deployable.>
-
-## Phases Completed
-
-| # | Phase | Status | Notes |
-|---|-------|--------|-------|
-| 1 | <name> | ✅ Pass / ⚠️ Partial / ❌ Fail | <brief note if any issues> |
-| 2 | <name> | ✅ Pass / ⚠️ Partial / ❌ Fail | <note> |
-| ... | ... | ... | ... |
-
-## Verification Results
-
-### Phase Verifications
-
-| Phase | Verification | Result | Output/Notes |
-|-------|-------------|--------|--------------|
-| 1 | <verification description> | ✅ / ❌ | <relevant output or "clean"> |
-| ... | ... | ... | ... |
-
-### Integration & Smoke Test
-
-| # | Check | Result | Notes |
-|---|-------|--------|-------|
-| 1 | <check description> | ✅ / ❌ | <notes> |
-| ... | ... | ... | ... |
-
-### Deployability
-
-| Tier | Command | Result | Notes |
-|------|---------|--------|-------|
-| Backend | `.\mvnw.cmd clean package` | ✅ / ❌ | <notes> |
-| Frontend | `npm run build` | ✅ / ❌ | <notes> |
-
-## Deviations from Plan
-
-<List any places where the implementation intentionally deviated from the plan, with justification. "None" if fully faithful.>
-
-## Issues Encountered
-
-<List any errors or problems hit during implementation and how they were resolved. "None" if smooth.>
-
-## Guardrail Compliance
-
-<Confirm compliance with any guardrails relevant to this slice (privacy, explainable score, no rejection signals). "N/A" if the slice doesn't touch guarded areas.>
-
-## Files Created/Modified
-
-<Bulleted list of all files created or modified, grouped by tier.>
-
-### Backend
-- `backend/path/to/file.java` — <brief description>
-- ...
-
-### Frontend
-- `frontend/path/to/file.tsx` — <brief description>
-- ...
-(or "No frontend changes" / "No backend changes")
-```
-
-### Step 6: Update plan status
+### Step 5: Update plan status
 
 If the implementation is fully successful (all verifications pass, deployability confirmed):
 - Update the plan's frontmatter `status` from `revised`/`approved` to `implemented`.
 
 ## Rules
 
-1. **Follow the plan faithfully.** The plan is the spec. Implement what it says. If you disagree with a plan decision, implement it anyway and note the concern in the "Deviations" section — don't unilaterally change the architecture.
+1. **Follow the plan faithfully.** The plan is the spec. Implement what it says. If you disagree with a plan decision, implement it anyway and note the concern in the conversation — don't unilaterally change the architecture.
 
 2. **Phase order matters.** Implement phases sequentially. Earlier phases create foundations that later phases depend on. Never skip ahead.
 
 3. **Verify after every phase.** Don't batch all verification to the end. Catch errors early, phase by phase. This prevents cascade failures.
 
-4. **Fix forward, don't edit the plan.** If a plan step is slightly wrong (e.g., a typo in a class name, a missing import), fix it in the code and note the deviation. Don't modify `plan.md` during implementation.
+4. **Fix forward, don't edit the plan.** If a plan step is slightly wrong (e.g., a typo in a class name, a missing import), fix it in the code and note the deviation in the conversation. Don't modify `plan.md` during implementation.
 
 5. **Respect guardrails absolutely.** If implementing a step would violate a PRD guardrail (no rejection signals, explainable score, score hidden while swiping), STOP and flag it to the user rather than writing violating code.
 
-6. **Keep scope tight.** Only implement what's in the plan. Don't add features, polish, or refactoring beyond what the plan specifies — even if you see opportunities. Note them in "Issues Encountered" for future consideration.
+6. **Keep scope tight.** Only implement what's in the plan. Don't add features, polish, or refactoring beyond what the plan specifies — even if you see opportunities.
 
-7. **Idempotent re-runs.** If `implementation-report.md` already exists, this is a re-implementation. Check which phases are already done (verify existing code against plan steps) and resume from the first incomplete phase rather than re-doing everything.
-
-8. **Dependency installation.** When adding dependencies (`pom.xml` changes, `package.json` changes), run the appropriate install/resolve command before proceeding:
+7. **Dependency installation.** When adding dependencies (`pom.xml` changes, `package.json` changes), run the appropriate install/resolve command before proceeding:
    - Backend: `.\mvnw.cmd dependency:resolve` (or just let the next `spring-boot:run` / `test` pull them)
    - Frontend: `npm install`
 
-9. **Docker awareness.** If the plan requires Docker (e.g., for Postgres via Docker Compose), check if Docker is available. If not, inform the user and suggest alternatives (e.g., H2 for tests, external Postgres).
+8. **Docker awareness.** If the plan requires Docker (e.g., for Postgres via Docker Compose), check if Docker is available. If not, inform the user and suggest alternatives (e.g., H2 for tests, external Postgres).
 
-10. **Commit-ready code.** All code written should be production-quality for a hackathon POC — properly formatted, no TODOs unless the plan explicitly defers something, no dead code, no commented-out blocks.
+9. **Commit-ready code.** All code written should be production-quality for a hackathon POC — properly formatted, no TODOs unless the plan explicitly defers something, no dead code, no commented-out blocks.
 
 ## Example invocation
 
 ```
-/10x-implement persistence-and-seed
+/deloitter-implement persistence-and-seed
 ```
 
-Reads `context/changes/persistence-and-seed/plan.md`, implements all 5 phases, verifies each, runs the integration smoke test, confirms `.\mvnw.cmd clean package` passes, and writes:
-- `context/changes/persistence-and-seed/implementation-report.md`
+Reads `context/changes/persistence-and-seed/plan.md`, implements all phases, verifies each, runs the integration smoke test, and confirms `.\mvnw.cmd clean package` passes. Updates plan status to `implemented` on success.
 
 ## Failure modes
 
 | Situation | Action |
 |-----------|--------|
-| Plan status is `draft` (not reviewed) | Warn user, ask to proceed or run `/10x-plan-review` first |
+| Plan status is `draft` (not reviewed) | Warn user, ask to proceed or run `/deloitter-plan-review` first |
 | Prerequisites not implemented | Stop, list what's missing, ask user how to proceed |
-| Phase verification fails after 3 fix attempts | Log the error, ask user for guidance, continue to next phase if non-blocking |
+| Phase verification fails after 3 fix attempts | Log the error in conversation, ask user for guidance, continue to next phase if non-blocking |
 | Docker not available but plan requires it | Inform user, suggest alternatives (H2 profile, external DB, skip Docker-dependent verification) |
-| Plan step is ambiguous or incomplete | Use best judgment based on tech-stack docs and conventions, note the interpretation in Deviations |
+| Plan step is ambiguous or incomplete | Use best judgment based on tech-stack docs and conventions, note the interpretation in the conversation |
 | Guardrail violation detected | STOP immediately, flag to user, do NOT write the violating code |
-
