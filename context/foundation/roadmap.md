@@ -40,7 +40,7 @@ because everything upstream only matters if the match reveal lands.
 
 | ID   | Change ID              | Outcome (user can …)                                              | Prerequisites    | PRD refs              | Status   |
 | ---- | ---------------------- | ----------------------------------------------------------------- | ---------------- | --------------------- | -------- |
-| F-01 | persistence-and-seed   | (foundation) Postgres wired + accounts/catalog seeded             | —                | Account provisioning, Data handling NFR | ready    |
+| F-01 | persistence-and-seed   | (foundation) Postgres wired + accounts/catalog seeded             | —                | Account provisioning, Data handling NFR | done     |
 | F-02 | auth-login-gate        | (foundation) email+password verified, authenticated session issued | F-01             | FR-001, Access Control | proposed |
 | S-01 | employee-login         | log in with seeded credentials and reach the app                 | F-01, F-02       | FR-001                | proposed |
 | S-02 | select-interests       | pick interests & competencies that drive matching                | F-01, S-01       | FR-002                | proposed |

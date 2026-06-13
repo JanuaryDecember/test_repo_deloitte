@@ -32,7 +32,7 @@
             Title    = 'Wire Postgres + seed demo accounts and interest catalog'
             Outcome  = 'PostgreSQL is connected to the Spring Boot backend, the minimal schema for employee accounts and the predefined interests/competencies catalog exists, and a seed harness populates enough demo employees that mutual matches can occur.'
             PrdRefs  = 'Account provisioning note, Data handling NFR, Business Logic'
-            Status   = 'ready'
+            Status   = 'done'
             PlanReady = $true
             NorthStar = $false
             Prereqs  = @()

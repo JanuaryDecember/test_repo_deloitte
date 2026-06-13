@@ -15,7 +15,7 @@
       "title": "Wire Postgres + seed demo accounts and interest catalog",
       "outcome": "PostgreSQL is connected to the Spring Boot backend, the minimal schema for employee accounts and the predefined interests/competencies catalog exists, and a seed harness populates enough demo employees that mutual matches can occur.",
       "prdRefs": "Account provisioning note, Data handling NFR, Business Logic",
-      "status": "ready",
+      "status": "done",
       "planReady": true,
       "northStar": false,
       "prereqs": [],
