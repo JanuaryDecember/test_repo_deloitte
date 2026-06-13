@@ -3,7 +3,6 @@ package com.example.deloitter.employee;
 import com.example.deloitter.catalog.Competency;
 import com.example.deloitter.catalog.Interest;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -42,17 +41,17 @@ public class Employee {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "employee_interest",
-            joinColumns = @JoinColumn(name = "employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "interest_id")
+        name = "employee_interest",
+        joinColumns = @JoinColumn(name = "employee_id"),
+        inverseJoinColumns = @JoinColumn(name = "interest_id")
     )
     private Set<Interest> interests = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "employee_competency",
-            joinColumns = @JoinColumn(name = "employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "competency_id")
+        name = "employee_competency",
+        joinColumns = @JoinColumn(name = "employee_id"),
+        inverseJoinColumns = @JoinColumn(name = "competency_id")
     )
     private Set<Competency> competencies = new HashSet<>();
 
@@ -149,4 +148,3 @@ public class Employee {
         this.competencies = competencies;
     }
 }
-
