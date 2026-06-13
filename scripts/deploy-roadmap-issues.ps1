@@ -263,6 +263,35 @@ foreach ($it in $items) {
     Write-Info "$($it.Id)  #$($numberMap[$it.Id])  links updated"
 }
 
+# --- LIVE: label sync pass (ensure labels match manifest status) -------------
+Write-Step "Syncing labels"
+$allStatusLabels = @('status:ready', 'status:proposed', 'status:done')
+foreach ($it in $items) {
+    $num = $numberMap[$it.Id]
+    if (-not $num) { continue }
+
+    $desiredLabels = Get-ItemLabels $it
+
+    # Remove stale status:* labels
+    foreach ($sl in $allStatusLabels) {
+        & gh issue edit $num --repo $Repo --remove-label $sl 2>$null | Out-Null
+    }
+    # Add desired labels
+    foreach ($lbl in $desiredLabels) {
+        & gh issue edit $num --repo $Repo --add-label $lbl 2>$null | Out-Null
+    }
+
+    # Auto-close issues with status:done
+    if ($it.Status -eq 'done') {
+        & gh issue close $num --repo $Repo 2>$null | Out-Null
+        Write-Info "$($it.Id)  #$num  labels: $($desiredLabels -join ', ')  [CLOSED]"
+    } else {
+        # Reopen if it was previously closed but status changed back
+        & gh issue reopen $num --repo $Repo 2>$null | Out-Null
+        Write-Info "$($it.Id)  #$num  labels: $($desiredLabels -join ', ')"
+    }
+}
+
 # --- Summary -----------------------------------------------------------------
 Write-Step "Done. Summary:"
 $items | ForEach-Object {

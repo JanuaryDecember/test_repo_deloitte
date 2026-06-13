@@ -362,6 +362,37 @@ for ((i=0; i<ITEM_COUNT; i++)); do
     info "$ID  #$NUM  links updated"
 done
 
+# --- LIVE: label sync pass (ensure labels match manifest status) ---------------
+step "Syncing labels"
+ALL_STATUS_LABELS="status:ready status:proposed status:done"
+for ((i=0; i<ITEM_COUNT; i++)); do
+    ID=$(get_item "$i" "id")
+    NUM=$(kv_get "number_$ID")
+    if [[ -z "$NUM" ]]; then continue; fi
+
+    DESIRED_LABELS=$(get_item_labels "$i")
+    STATUS=$(get_item "$i" "status")
+
+    # Remove stale status:* labels, add correct ones
+    for sl in $ALL_STATUS_LABELS; do
+        gh issue edit "$NUM" --repo "$REPO" --remove-label "$sl" >/dev/null 2>&1 || true
+    done
+    # Add desired labels
+    for lbl in $DESIRED_LABELS; do
+        gh issue edit "$NUM" --repo "$REPO" --add-label "$lbl" >/dev/null 2>&1 || true
+    done
+
+    # Auto-close issues with status:done
+    if [[ "$STATUS" == "done" ]]; then
+        gh issue close "$NUM" --repo "$REPO" >/dev/null 2>&1 || true
+        info "$ID  #$NUM  labels: $DESIRED_LABELS  [CLOSED]"
+    else
+        # Reopen if it was previously closed but status changed back
+        gh issue reopen "$NUM" --repo "$REPO" >/dev/null 2>&1 || true
+        info "$ID  #$NUM  labels: $DESIRED_LABELS"
+    fi
+done
+
 # --- Summary ------------------------------------------------------------------
 step "Done. Summary:"
 printf "%-6s %-8s %s\n" "ID" "Issue" "Title"
