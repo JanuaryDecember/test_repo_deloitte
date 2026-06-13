@@ -1,0 +1,114 @@
+/* AppShell — sticky header layout
+   Matches design comp lines 58–80 of Deloitter.dc.html */
+
+.wrapper {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* ---- Header ---- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  position: sticky;
+  top: 0;
+  background: oklch(0.985 0.012 135 / 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 50;
+}
+
+/* ---- Logo group (left) ---- */
+.logoGroup {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.logoMark {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: var(--dl-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 900;
+  font-size: 19px;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--dl-text);
+}
+
+/* ---- Nav (right) ---- */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navBtn {
+  position: relative;
+  border: none;
+  background: none;
+  font-size: 15px;
+  font-weight: 700;
+  color: oklch(0.30 0.02 152);
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.12s;
+  line-height: 1;
+}
+
+.navBtn:hover {
+  background: oklch(0.91 0.012 150 / 0.6);
+}
+
+.navBtn:focus-visible {
+  outline: 2px solid var(--dl-green);
+  outline-offset: 2px;
+}
+
+/* Active tab underline bar */
+.navActiveBar {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--dl-green);
+}
+
+/* ---- Avatar ---- */
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--dl-green);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* ---- Main content area ---- */
+.main {
+  /* Pages rendered via <Outlet> sit here */
+}
+

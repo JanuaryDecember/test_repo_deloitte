@@ -1,0 +1,44 @@
+/* HomePage — welcome content rendered inside AppShell */
+
+.page {
+  padding: 40px 0;
+}
+
+.heading {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+  color: var(--dl-text);
+}
+
+.subtext {
+  font-size: 15px;
+  color: var(--dl-text-muted);
+  line-height: 1.5;
+  margin: 0 0 28px;
+  max-width: 520px;
+}
+
+.logoutBtn {
+  border: 1.5px solid var(--dl-card-border);
+  background: transparent;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--dl-text);
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.logoutBtn:hover {
+  background: oklch(0.96 0.012 150);
+  border-color: oklch(0.82 0.03 152);
+}
+
+.logoutBtn:focus-visible {
+  outline: 2px solid var(--dl-green);
+  outline-offset: 2px;
+}
+

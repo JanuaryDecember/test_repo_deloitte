@@ -1,0 +1,55 @@
+/* Deloitter Design Tokens
+   Source of truth: frontend/context/foundation/design/Deloitter.dc.html
+   All values taken directly from the HTML design comp. */
+
+:root {
+  /* Colors */
+  --dl-green:         oklch(0.70 0.16 145);
+  --dl-bg:            oklch(0.985 0.012 135);
+  --dl-text:          oklch(0.26 0.03 152);
+  --dl-text-muted:    oklch(0.53 0.02 152);
+  --dl-text-label:    oklch(0.42 0.02 152);
+  --dl-card-border:   oklch(0.91 0.012 150);
+  --dl-input-border:  oklch(0.89 0.012 150);
+  --dl-input-bg:      oklch(0.985 0.008 145);
+
+  /* Shadows */
+  --dl-card-shadow:   0 24px 60px -28px oklch(0.4 0.05 150 / .45);
+  --dl-btn-shadow:    0 12px 26px -12px oklch(0.70 0.16 145 / .9);
+
+  /* Border radii */
+  --dl-radius-card:   28px;
+  --dl-radius-input:  13px;
+  --dl-radius-btn:    14px;
+
+  /* Typography */
+  --dl-font: 'Figtree', system-ui, -apple-system, sans-serif;
+}
+
+/* Animations */
+@keyframes dl-pop {
+  0%   { transform: scale(0.94); }
+  60%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+@keyframes dl-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-7px); }
+}
+
+@keyframes dl-confetti {
+  0%   { transform: translateY(-30px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(640px) rotate(540deg); opacity: 0; }
+}
+
+@keyframes dl-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes dl-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+

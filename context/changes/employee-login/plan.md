@@ -68,29 +68,29 @@ Referenced throughout the plan. Implementation should extract these into a share
 
 #### Frontend
 
-- [ ] Update `frontend/index.html`:
+- [x] Update `frontend/index.html`:
   - Add Google Fonts `<link>` for Figtree (weights 400, 500, 600, 700, 800, 900)
   - Add `<link rel="preconnect" href="https://fonts.googleapis.com">` and `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>`
   - Update `<title>` from "bootstrap-scaffold" to "Deloitter"
-- [ ] Update `frontend/package.json`:
+- [x] Update `frontend/package.json`:
   - Rename `"name"` from `"bootstrap-scaffold"` to `"deloitter"` (aligns with project identity)
-- [ ] Create `frontend/src/styles/tokens.css`:
+- [x] Create `frontend/src/styles/tokens.css`:
   - Define CSS custom properties for all design tokens listed above
   - Include the `@keyframes` from the design comp that may be needed later (`dl-pop`, `dl-fadein`, `dl-rise`)
-- [ ] Update `frontend/src/index.css`:
+- [x] Update `frontend/src/index.css`:
   - Import `./styles/tokens.css`
   - Apply global resets: `* { box-sizing: border-box }`, `html, body { margin: 0; padding: 0 }`
   - Set body font-family to `var(--dl-font)`, `-webkit-font-smoothing: antialiased`, `text-rendering: optimizeLegibility`
   - Set body background to `var(--dl-bg)`, color to `var(--dl-text)`
   - Set `button { font-family: inherit }`
   - Remove the default Vite template styles (the old counter/logo styles in `App.css`)
-- [ ] Delete `frontend/src/App.css` (default Vite template styles — no longer needed)
+- [x] Delete `frontend/src/App.css` (default Vite template styles — no longer needed)
 
 #### Verification
 
-- [ ] `npm run build` succeeds
-- [ ] `npm run dev` — page loads with Figtree font visible (check DevTools → Computed → font-family)
-- [ ] Background color is the light greenish `oklch(0.985 0.012 135)`
+- [x] `npm run build` succeeds
+- [x] `npm run dev` — page loads with Figtree font visible (check DevTools → Computed → font-family)
+- [x] Background color is the light greenish `oklch(0.985 0.012 135)`
 
 ---
 
@@ -104,8 +104,8 @@ Referenced throughout the plan. Implementation should extract these into a share
 
 #### Frontend
 
-- [ ] Delete `frontend/src/pages/LoginPlaceholder.tsx` (the F-02 temporary placeholder)
-- [ ] Create `frontend/src/pages/LoginPage.tsx`:
+- [x] Delete `frontend/src/pages/LoginPlaceholder.tsx` (the F-02 temporary placeholder — never existed, F-02 not yet implemented; skipped)
+- [x] Create `frontend/src/pages/LoginPage.tsx`:
   - Full-viewport centered layout with `min-height: 100vh`, flexbox center, `padding: 32px`
   - **Decorative background circles** (two absolutely-positioned blurred circles):
     - Top-left: 520px circle, `oklch(0.82 0.11 145 / .35)`, `filter: blur(40px)`, offset `top: -160px; left: -120px`
@@ -139,17 +139,17 @@ Referenced throughout the plan. Implementation should extract these into a share
     - On success: navigate to `/` (programmatic via `useNavigate()`)
     - On failure: set error "Invalid email or password"
   - **Redirect if authenticated**: if `useAuth().user` is not null, redirect to `/` (no reason to show login to authenticated user)
-- [ ] Create `frontend/src/pages/LoginPage.module.css`:
+- [x] Create `frontend/src/pages/LoginPage.module.css`:
   - All styles matching the design spec above
   - Media query for small screens: card padding slightly reduced, background circles hidden below ~480px
-- [ ] Update route in `frontend/src/App.tsx`:
+- [x] Update route in `frontend/src/App.tsx`:
   - Replace `LoginPlaceholder` import with `LoginPage`
   - `/login` route renders `<LoginPage />`
 
 #### Verification
 
-- [ ] `npm run build` succeeds
-- [ ] `npm run lint` passes
+- [x] `npm run build` succeeds
+- [x] `npm run lint` passes
 - [ ] `npm run dev` — visiting `/login`:
   - Decorative background circles visible
   - Centered white card with logo, heading, subtext
@@ -173,8 +173,8 @@ Referenced throughout the plan. Implementation should extract these into a share
 
 #### Frontend
 
-- [ ] Delete `frontend/src/pages/Home.tsx` (the F-02 temporary placeholder — replaced by `HomePage.tsx`)
-- [ ] Create `frontend/src/components/AppShell.tsx`:
+- [x] Delete `frontend/src/pages/Home.tsx` (the F-02 temporary placeholder — replaced by `HomePage.tsx`)
+- [x] Create `frontend/src/components/AppShell.tsx`:
   - Wraps authenticated pages (used inside `<ProtectedRoute>` or as the layout for protected routes)
   - **Header** (from design comp lines 58–80):
     - `max-width: 1180px`, centered (`margin: 0 auto`), horizontal padding `28px`
@@ -186,17 +186,17 @@ Referenced throughout the plan. Implementation should extract these into a share
       - User avatar: 36px circle, bg `var(--dl-green)`, white initials (14px, weight 800), margin-left 10px
   - Nav buttons are non-functional placeholders for now (Discover/Matches/Profile tabs will be wired in S-02+). Active tab defaults to "Discover".
   - Renders `<Outlet />` below the header for nested route content
-- [ ] Create `frontend/src/components/AppShell.module.css`:
+- [x] Create `frontend/src/components/AppShell.module.css`:
   - Header styles matching design
   - Nav button styles with hover and active states
-- [ ] Create `frontend/src/pages/HomePage.tsx`:
+- [x] Create `frontend/src/pages/HomePage.tsx`:
   - Simple welcome content (rendered inside AppShell):
     - Heading: "Welcome, {firstName}!" — 26px, weight 900
     - Subtext: "Your next connection is one swipe away. Start discovering colleagues who share your interests."
     - Logout button (styled as secondary/outlined): calls `logout()` from `useAuth()`
   - This is a placeholder landing; S-02/S-03 will replace it with real feature content
-- [ ] Create `frontend/src/pages/HomePage.module.css`
-- [ ] Update `frontend/src/App.tsx` route structure:
+- [x] Create `frontend/src/pages/HomePage.module.css`
+- [x] Update `frontend/src/App.tsx` route structure:
   - Protected routes render inside `<AppShell>` as a layout route:
     ```
     <Route element={<ProtectedRoute />}>
