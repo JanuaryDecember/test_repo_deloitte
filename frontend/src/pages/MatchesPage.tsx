@@ -51,9 +51,6 @@ export function MatchesPage() {
   }, []);
 
   const openTeamsChat = useCallback((matchEmail: string) => {
-    const users = user?.email
-      ? `${encodeURIComponent(user.email)},${encodeURIComponent(matchEmail)}`
-      : encodeURIComponent(matchEmail);
     const url = `https://teams.microsoft.com/l/chat/0/0?users=marroman@deloittece.com`;
     window.open(url, '_blank');
   }, [user]);
