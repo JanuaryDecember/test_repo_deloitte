@@ -1,0 +1,75 @@
+/* MatchesPlaceholder — temporary empty-state page (S-04 will replace this) */
+
+.page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 72px);
+  padding: 40px 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 24px;
+  border: 1.5px solid oklch(0.91 0.03 150);
+  box-shadow: 0 4px 24px oklch(0.55 0.08 145 / 0.10);
+  padding: 48px 40px;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.iconWrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: oklch(0.93 0.06 145);
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: oklch(0.20 0.02 152);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14.5px;
+  color: oklch(0.55 0.02 152);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ctaBtn {
+  margin-top: 8px;
+  background: oklch(0.70 0.16 145);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 13px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.ctaBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px oklch(0.55 0.14 145 / 0.30);
+}
+
+.ctaBtn:focus-visible {
+  outline: 2px solid oklch(0.70 0.16 145);
+  outline-offset: 3px;
+}
+

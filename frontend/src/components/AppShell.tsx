@@ -1,15 +1,18 @@
-import { Outlet } from 'react-router';
+import { Outlet, useNavigate, useLocation } from 'react-router';
 import { useAuth } from '../auth/useAuth';
 import styles from './AppShell.module.css';
 
-type Tab = 'discover' | 'matches' | 'profile';
-
 export function AppShell() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
-  // Nav tabs are non-functional placeholders in S-01.
-  // Active tab defaults to "Discover".
-  const activeTab = 'discover' as Tab;
+  // Derive active tab from current path
+  const activeTab = pathname.startsWith('/matches')
+    ? 'matches'
+    : pathname.startsWith('/profile')
+      ? 'profile'
+      : 'discover'; // covers '/' and '/discover'
 
   const initials = user
     ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
@@ -26,19 +29,34 @@ export function AppShell() {
 
         {/* Nav + avatar */}
         <nav className={styles.nav}>
-          <button type="button" className={styles.navBtn}>
+          <button
+            type="button"
+            className={styles.navBtn}
+            onClick={() => navigate('/discover')}
+            aria-current={activeTab === 'discover' ? 'page' : undefined}
+          >
             Discover
             {activeTab === 'discover' && (
               <div className={styles.navActiveBar} />
             )}
           </button>
-          <button type="button" className={styles.navBtn}>
+          <button
+            type="button"
+            className={styles.navBtn}
+            onClick={() => navigate('/matches')}
+            aria-current={activeTab === 'matches' ? 'page' : undefined}
+          >
             Matches
             {activeTab === 'matches' && (
               <div className={styles.navActiveBar} />
             )}
           </button>
-          <button type="button" className={styles.navBtn}>
+          <button
+            type="button"
+            className={styles.navBtn}
+            onClick={() => navigate('/profile')}
+            aria-current={activeTab === 'profile' ? 'page' : undefined}
+          >
             Profile
             {activeTab === 'profile' && (
               <div className={styles.navActiveBar} />

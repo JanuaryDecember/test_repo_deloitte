@@ -1,4 +1,5 @@
 import type { AuthUser } from '../types/auth';
+import type { CandidateCard, SwipeRequest, SwipeResponse } from '../types/discover';
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? '';
 
@@ -34,5 +35,18 @@ export async function logout(): Promise<void> {
 export async function fetchMe(): Promise<AuthUser> {
   const res = await apiFetch('/api/auth/me');
   return res.json() as Promise<AuthUser>;
+}
+
+export async function fetchStack(): Promise<CandidateCard[]> {
+  const res = await apiFetch('/api/discover/stack');
+  return res.json() as Promise<CandidateCard[]>;
+}
+
+export async function recordSwipe(req: SwipeRequest): Promise<SwipeResponse> {
+  const res = await apiFetch('/api/discover/swipe', {
+    method: 'POST',
+    body: JSON.stringify(req),
+  });
+  return res.json() as Promise<SwipeResponse>;
 }
 

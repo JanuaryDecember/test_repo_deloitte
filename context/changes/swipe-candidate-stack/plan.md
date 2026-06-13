@@ -1,7 +1,7 @@
 ---
 change_id: "swipe-candidate-stack"
 roadmap_id: "S-03"
-status: revised
+status: implemented
 created: 2026-06-13
 prd_refs: [FR-003, FR-004, Business Logic, Perceived-responsiveness NFR]
 prerequisites: [F-01 persistence-and-seed, S-02 select-interests]
@@ -53,7 +53,7 @@ It does **not** introduce match detection or the Matches view — those belong t
 
 #### Backend
 
-- [ ] Create `backend/src/main/resources/db/migration/V6__create_employee_swipe.sql`:
+- [x] Create `backend/src/main/resources/db/migration/V6__create_employee_swipe.sql`:
   ```sql
   CREATE TABLE employee_swipe (
       swiper_id    BIGINT NOT NULL REFERENCES employee(id),
@@ -65,15 +65,15 @@ It does **not** introduce match detection or the Matches view — those belong t
   );
   CREATE INDEX idx_swipe_swiper ON employee_swipe(swiper_id);
   ```
-- [ ] Create `backend/src/main/java/com/example/deloitter/swipe/SwipeId.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/swipe/SwipeId.java`:
   - Composite key class implementing `Serializable`: fields `Long swiperId`, `Long candidateId`
   - Override `equals()`/`hashCode()` based on both fields
-- [ ] Create `backend/src/main/java/com/example/deloitter/swipe/EmployeeSwipe.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/swipe/EmployeeSwipe.java`:
   - `@Entity @Table(name = "employee_swipe") @IdClass(SwipeId.class)`
   - Fields: `@Id swiperId`, `@Id candidateId`, `boolean liked`, `LocalDateTime createdAt`
   - `@ManyToOne(fetch = LAZY)` relationships to `Employee` for both IDs (optional — for convenient JPA navigation if needed)
   - `@PrePersist` sets `createdAt` if null
-- [ ] Create `backend/src/main/java/com/example/deloitter/swipe/SwipeRepository.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/swipe/SwipeRepository.java`:
   - `extends JpaRepository<EmployeeSwipe, SwipeId>`
   - Method: `List<EmployeeSwipe> findBySwiperId(Long swiperId)` — returns all swipes by a user
   - Method: `boolean existsBySwiperIdAndCandidateId(Long swiperId, Long candidateId)` or use `existsById(new SwipeId(...))`
@@ -84,9 +84,9 @@ It does **not** introduce match detection or the Matches view — those belong t
 
 #### Verification
 
-- [ ] Run `.\mvnw.cmd spring-boot:run` — Flyway V6 migration applies without error
-- [ ] Verify in Postgres: `\d employee_swipe` shows the expected schema
-- [ ] Application context starts cleanly (Hibernate validates the entity against the table)
+- [x] Run `.\mvnw.cmd spring-boot:run` — Flyway V6 migration applies without error
+- [x] Verify in Postgres: `\d employee_swipe` shows the expected schema
+- [x] Application context starts cleanly (Hibernate validates the entity against the table)
 
 ---
 
@@ -96,7 +96,7 @@ It does **not** introduce match detection or the Matches view — those belong t
 
 #### Backend
 
-- [ ] Create `backend/src/main/java/com/example/deloitter/swipe/CompatibilityService.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/swipe/CompatibilityService.java`:
   - Service class with method: `int computeScore(Employee me, Employee candidate)`
   - Logic:
     1. Build `meAttrs` set: all interest names + all competency names + `"sl:" + me.serviceLine`
@@ -107,14 +107,14 @@ It does **not** introduce match detection or the Matches view — those belong t
   - Return as integer percentage (0–100)
   - Method: `List<String> sharedInterests(Employee me, Employee candidate)` — names of interests both share
   - Method: `List<String> sharedCompetencies(Employee me, Employee candidate)` — names of competencies both share
-- [ ] Create `backend/src/main/java/com/example/deloitter/swipe/CandidateCard.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/swipe/CandidateCard.java`:
   - Record/DTO: `Long id`, `String firstName`, `String lastName`, `String initials`, `String roleFamily`, `String serviceLine`, `String contactInfo`, `List<String> sharedInterests`, `List<String> sharedCompetencies`
   - `initials` computed as `firstName.charAt(0) + "" + lastName.charAt(0)` (uppercased)
-- [ ] Create `backend/src/main/java/com/example/deloitter/swipe/SwipeRequest.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/swipe/SwipeRequest.java`:
   - Record: `Long candidateId`, `boolean liked`
-- [ ] Create `backend/src/main/java/com/example/deloitter/swipe/SwipeResponse.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/swipe/SwipeResponse.java`:
   - Record: `boolean success`
-- [ ] Create `backend/src/main/java/com/example/deloitter/swipe/DiscoverService.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/swipe/DiscoverService.java`:
   - Inject `EmployeeRepository`, `SwipeRepository`, `CompatibilityService`
   - Method: `List<CandidateCard> getStack(Employee me)`:
     1. Fetch all employees except `me` from `EmployeeRepository`
@@ -128,7 +128,7 @@ It does **not** introduce match detection or the Matches view — those belong t
     1. Validate `candidateId` exists and is not self
     2. Check not already swiped (throw 409 if so)
     3. Create `EmployeeSwipe` entity, save
-- [ ] Create `backend/src/main/java/com/example/deloitter/swipe/DiscoverController.java`:
+- [x] Create `backend/src/main/java/com/example/deloitter/swipe/DiscoverController.java`:
   - `@RestController @RequestMapping("/api/discover")`
   - Inject `DiscoverService`
   - `GET /api/discover/stack`:
@@ -142,7 +142,7 @@ It does **not** introduce match detection or the Matches view — those belong t
     - Return `SwipeResponse(true)` (200 OK)
     - If already swiped → return 409 Conflict with error body
     - If candidateId invalid → return 400 Bad Request
-- [ ] Ensure `SecurityConfig` permits `/api/discover/**` within the authenticated boundary (should already be covered by the "require auth for all `/api/**`" rule from F-02)
+- [x] Ensure `SecurityConfig` permits `/api/discover/**` within the authenticated boundary (should already be covered by the "require auth for all `/api/**`" rule from F-02)
 
 #### Frontend
 
@@ -150,18 +150,18 @@ It does **not** introduce match detection or the Matches view — those belong t
 
 #### Verification
 
-- [ ] Start backend with Postgres + seed data
-- [ ] Log in as `alice.chen@deloitte.demo` (who has 5 interests + 5 competencies)
-- [ ] `GET /api/discover/stack` (with auth cookie) → returns 200 with 19 candidates, sorted by score desc
-- [ ] Top candidate should share multiple interests/competencies with Alice (verify overlap is correct)
-- [ ] Response does **not** contain a `score` field anywhere
-- [ ] `POST /api/discover/swipe` with `{ "candidateId": <first candidate ID>, "liked": true }` → 200
-- [ ] `GET /api/discover/stack` again → first candidate is no longer in the list (18 remaining)
-- [ ] `POST /api/discover/swipe` with same candidateId again → 409 Conflict
-- [ ] `POST /api/discover/swipe` with `{ "candidateId": <own ID>, "liked": true }` → 400
-- [ ] `POST /api/discover/swipe` with invalid candidateId → 400
-- [ ] All endpoints return 401 without auth cookie
-- [ ] **Guardrail check:** No endpoint exposes the compatibility score or any other user's like/pass decisions
+- [x] Start backend with Postgres + seed data
+- [x] Log in as `alice.chen@deloitte.demo` (who has 5 interests + 5 competencies)
+- [x] `GET /api/discover/stack` (with auth cookie) → returns 200 with 19 candidates, sorted by score desc
+- [x] Top candidate should share multiple interests/competencies with Alice (verify overlap is correct)
+- [x] Response does **not** contain a `score` field anywhere
+- [x] `POST /api/discover/swipe` with `{ "candidateId": <first candidate ID>, "liked": true }` → 200
+- [x] `GET /api/discover/stack` again → first candidate is no longer in the list (18 remaining)
+- [x] `POST /api/discover/swipe` with same candidateId again → 409 Conflict
+- [x] `POST /api/discover/swipe` with `{ "candidateId": <own ID>, "liked": true }` → 400
+- [x] `POST /api/discover/swipe` with invalid candidateId → 400
+- [x] All endpoints return 401 without auth cookie
+- [x] **Guardrail check:** No endpoint exposes the compatibility score or any other user's like/pass decisions
 
 ---
 
@@ -175,11 +175,11 @@ It does **not** introduce match detection or the Matches view — those belong t
 
 #### Frontend
 
-- [ ] Create `frontend/src/types/discover.ts`:
+- [x] Create `frontend/src/types/discover.ts`:
   - `export interface CandidateCard { id: number; firstName: string; lastName: string; initials: string; roleFamily: string; serviceLine: string; contactInfo: string; sharedInterests: string[]; sharedCompetencies: string[]; }`
   - `export interface SwipeRequest { candidateId: number; liked: boolean; }`
   - `export interface SwipeResponse { success: boolean; }`
-- [ ] Update `frontend/src/api/client.ts`:
+- [x] Update `frontend/src/api/client.ts`:
   - Add typed functions:
     - `fetchStack(): Promise<CandidateCard[]>` — `GET /api/discover/stack`
     - `recordSwipe(req: SwipeRequest): Promise<SwipeResponse>` — `POST /api/discover/swipe`
@@ -187,8 +187,8 @@ It does **not** introduce match detection or the Matches view — those belong t
 
 #### Verification
 
-- [ ] `npm run build` succeeds (types compile)
-- [ ] `npm run lint` passes
+- [x] `npm run build` succeeds (types compile)
+- [x] `npm run lint` passes
 
 ---
 
@@ -202,7 +202,7 @@ It does **not** introduce match detection or the Matches view — those belong t
 
 #### Frontend
 
-- [ ] Create `frontend/src/pages/DiscoverPage.tsx`:
+- [x] Create `frontend/src/pages/DiscoverPage.tsx`:
   - **Layout** (design comp lines 84–197):
     - `display: flex; flex-direction: column; align-items: center; padding: 18px 0 40px`
   - **Header section** (lines 86–91):
@@ -259,22 +259,22 @@ It does **not** introduce match detection or the Matches view — those belong t
     - Pass button: trigger `flyOff("pass")` programmatically
     - Disabled when no top card or animation in progress
 
-- [ ] Create `frontend/src/pages/DiscoverPage.module.css`:
+- [x] Create `frontend/src/pages/DiscoverPage.module.css`:
   - Keyframe animations:
     - `dl-float`: `0%,100% { transform: translateY(0) } 50% { transform: translateY(-7px) }` (for empty state emoji)
   - Card hover/grab cursor states
   - Button hover effects: `transform: translateY(-3px) scale(1.05)`
   - Transition utilities for fly-off and spring-back
 
-- [ ] Create `frontend/src/utils/accentColor.ts`:
+- [x] Create `frontend/src/utils/accentColor.ts`:
   - Helper to assign consistent accent colors to candidates based on ID/name hash:
     - Palette: `["oklch(0.70 0.16 145)", "oklch(0.78 0.13 70)", "oklch(0.66 0.15 300)", "oklch(0.70 0.16 30)", "oklch(0.72 0.12 180)"]`
     - `export function getAccentColor(id: number): string` — maps `id % palette.length` to a color
 
 #### Verification
 
-- [ ] `npm run build` succeeds
-- [ ] `npm run lint` passes
+- [x] `npm run build` succeeds
+- [x] `npm run lint` passes
 - [ ] Page renders with the first candidate card showing name, role, shared interests/competencies
 - [ ] Back cards visible behind the top card (stacked effect)
 - [ ] Dragging the card shows LIKE/PASS badge and card follows pointer
@@ -298,7 +298,7 @@ It does **not** introduce match detection or the Matches view — those belong t
 
 #### Frontend
 
-- [ ] Update `frontend/src/App.tsx` route structure:
+- [x] Update `frontend/src/App.tsx` route structure:
   - Add `/discover` route inside the protected/AppShell layout
   - Make `/` redirect to `/discover` (the default authenticated landing page)
   ```
@@ -311,47 +311,47 @@ It does **not** introduce match detection or the Matches view — those belong t
     </Route>
   </Route>
   ```
-- [ ] Update `frontend/src/components/AppShell.tsx`:
+- [x] Update `frontend/src/components/AppShell.tsx`:
   - Wire the "Discover" nav tab to navigate to `/discover`
   - Active tab indicator: highlight "Discover" when current path is `/discover` or `/`
   - "Matches" tab navigates to `/matches` (placeholder page until S-04)
-- [ ] Create `frontend/src/pages/MatchesPlaceholder.tsx` (temporary until S-04):
+- [x] Create `frontend/src/pages/MatchesPlaceholder.tsx` (temporary until S-04):
   - Show the "No matches yet" empty state from design comp (lines 206–212):
     - 💚 emoji in green circle
     - "No matches yet" title
     - "Keep swiping in Discover — matches show up here."
     - "Start swiping" button → navigates to `/discover`
-- [ ] **Loading state** for stack fetch:
+- [x] **Loading state** for stack fetch:
   - Show a skeleton/pulsing placeholder card while `fetchStack()` is in-flight
   - Prevents a flash of empty content on page load
-- [ ] **Error handling**:
+- [x] **Error handling**:
   - If `fetchStack()` fails → show a simple error message with retry button
   - If `recordSwipe()` fails → log error but don't block the UI (fire-and-forget for responsiveness); optionally show a subtle toast
-- [ ] **Prefetch behavior**:
+- [x] **Prefetch behavior**:
   - Fetch the stack once on mount; the full array lives in memory
   - Card transitions are purely local state (index increment) — no per-card API call
   - This guarantees < 300ms card-to-card transitions (NFR)
-- [ ] **Edge case — user with no selections**:
+- [x] **Edge case — user with no selections**:
   - If the stack returns empty because the user has no interests/competencies selected, show a message: "Pick some interests first to find colleagues" with a CTA to `/profile`
-- [ ] **Accessibility**:
+- [x] **Accessibility**:
   - Action buttons have `title` attributes ("Like", "Pass")
   - Card content is readable by screen readers (proper heading hierarchy within card)
   - Keyboard support: buttons are focusable and activatable with Enter/Space
   - LIKE/PASS badges have `aria-hidden="true"` (visual-only feedback)
-- [ ] **Document title**: "Deloitter — Discover" while on the page
-- [ ] Verify `npm run lint` passes
-- [ ] Verify `npm run build` succeeds
+- [x] **Document title**: "Deloitter — Discover" while on the page
+- [x] Verify `npm run lint` passes
+- [x] Verify `npm run build` succeeds
 
 #### Verification
 
-- [ ] Clicking "Discover" tab → navigates to `/discover`
-- [ ] After login → lands on `/discover` by default
-- [ ] "Matches" tab → navigates to `/matches` with placeholder UI
-- [ ] Stack loads without visible stall (loading state flashes briefly)
+- [x] Clicking "Discover" tab → navigates to `/discover`
+- [x] After login → lands on `/discover` by default
+- [x] "Matches" tab → navigates to `/matches` with placeholder UI
+- [x] Stack loads without visible stall (loading state flashes briefly)
 - [ ] All swipe interactions work (drag + buttons)
 - [ ] After swiping all candidates → empty state shows "View your matches" CTA
 - [ ] Refreshing `/discover` after swiping some → those candidates are gone (persisted server-side)
-- [ ] Page title shows "Deloitter — Discover"
+- [x] Page title shows "Deloitter — Discover"
 - [ ] Tab through action buttons with keyboard → focus ring visible, Enter activates
 
 ---
