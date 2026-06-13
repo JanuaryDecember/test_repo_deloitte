@@ -1,10 +1,14 @@
+> **Archived:** 2026-06-13 00:00 | Change ID: `select-interests` | Roadmap ID: `S-02`
+
 ---
+
 change_id: "select-interests"
 roadmap_id: "S-02"
 status: implemented
 created: 2026-06-13
 prd_refs: [FR-002]
 prerequisites: [F-01 persistence-and-seed, S-01 employee-login]
+
 ---
 
 # Plan: Select interests & competencies
@@ -21,20 +25,20 @@ Sequenced after F-01 (catalog tables + seed data exist) and S-01 (user can log i
 
 ## Decisions & Assumptions
 
-| # | Decision | Choice | Rationale |
-|---|----------|--------|-----------|
-| 1 | API design — catalog retrieval | **`GET /api/catalog`** returns `{ interests: [...], competencies: [...] }` in a single call | One request loads all chip options. The catalog is small (~15+~15 items), so combining reduces latency vs. two separate calls. |
-| 2 | API design — read selections | **`GET /api/profile/selections`** returns the authenticated user's current interest and competency IDs | Scoped to the session user (no user ID in path — privacy by design). Separate from catalog so the UI can compose them. |
-| 3 | API design — save selections | **`PUT /api/profile/selections`** with body `{ interestIds: [...], competencyIds: [...] }` → replaces all selections atomically | Full replacement is simpler than individual toggle endpoints. The UI collects all toggles and saves at once on "Save profile." Idempotent PUT semantics. |
-| 4 | Minimum selections | **No enforcement in S-02** — user may save with 0 selections | Keeps scope tight. S-03 can handle a user with no selections gracefully (empty stack / prompt to pick interests). Avoids UI validation complexity. |
-| 5 | Profile page route | **`/profile`** — wired to the "Profile" nav tab in the AppShell | Follows the design comp's navigation structure (Discover / Matches / Profile tabs). |
-| 6 | UI pattern | **Chip-toggle pills** (tap to select/deselect) matching design comp exactly | Selected: green bg + white text. Unselected: white bg + muted text + light border. Uses the oklch palette from design tokens. |
-| 7 | Save feedback | **Toast notification** ("Profile updated") | Matches the design comp's toast pattern (line 319-321). Appears on successful save, auto-dismisses. |
-| 8 | Seeded user selections | **Pre-seeded selections are shown as pre-selected** | F-01 seeds employees with 3-7 interests/3-6 competencies. The logged-in user sees their seed selections already toggled on and can change them. This makes the demo feel populated from the start. |
-| 9 | Profile header card | **Show user info (name, role, service line)** from the auth session or a profile endpoint | Matches design comp lines 251-257. Requires the backend to expose role/service-line in the profile response (or reuse data from the session). |
-| 10 | Backend response for user profile | **Extend `GET /api/auth/me`** or add **`GET /api/profile`** with full employee fields | Plan adds a dedicated `GET /api/profile` endpoint returning name, role, serviceLine, office, initials — keeping auth endpoints thin. |
-| 11 | Feature package naming | **`catalog/` and `profile/`** instead of `interests/` | AGENTS.md lists `interests/` as an example, but the catalog endpoint groups both interests *and* competencies, so `catalog/` is a better semantic fit. `profile/` groups user-facing profile + selection endpoints. |
-| 12 | Automated tests | **Not included in this slice** | The hackathon speed goal favours manual verification over test scaffolding. The backend has `spring-boot-starter-webmvc-test` available — an implementer may optionally add a `@WebMvcTest` for the controllers if time allows, but it is not required for acceptance. |
+| #   | Decision                          | Choice                                                                                                                          | Rationale                                                                                                                                                                                                                                                              |
+| --- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | API design — catalog retrieval    | **`GET /api/catalog`** returns `{ interests: [...], competencies: [...] }` in a single call                                     | One request loads all chip options. The catalog is small (~15+~15 items), so combining reduces latency vs. two separate calls.                                                                                                                                         |
+| 2   | API design — read selections      | **`GET /api/profile/selections`** returns the authenticated user's current interest and competency IDs                          | Scoped to the session user (no user ID in path — privacy by design). Separate from catalog so the UI can compose them.                                                                                                                                                 |
+| 3   | API design — save selections      | **`PUT /api/profile/selections`** with body `{ interestIds: [...], competencyIds: [...] }` → replaces all selections atomically | Full replacement is simpler than individual toggle endpoints. The UI collects all toggles and saves at once on "Save profile." Idempotent PUT semantics.                                                                                                               |
+| 4   | Minimum selections                | **No enforcement in S-02** — user may save with 0 selections                                                                    | Keeps scope tight. S-03 can handle a user with no selections gracefully (empty stack / prompt to pick interests). Avoids UI validation complexity.                                                                                                                     |
+| 5   | Profile page route                | **`/profile`** — wired to the "Profile" nav tab in the AppShell                                                                 | Follows the design comp's navigation structure (Discover / Matches / Profile tabs).                                                                                                                                                                                    |
+| 6   | UI pattern                        | **Chip-toggle pills** (tap to select/deselect) matching design comp exactly                                                     | Selected: green bg + white text. Unselected: white bg + muted text + light border. Uses the oklch palette from design tokens.                                                                                                                                          |
+| 7   | Save feedback                     | **Toast notification** ("Profile updated")                                                                                      | Matches the design comp's toast pattern (line 319-321). Appears on successful save, auto-dismisses.                                                                                                                                                                    |
+| 8   | Seeded user selections            | **Pre-seeded selections are shown as pre-selected**                                                                             | F-01 seeds employees with 3-7 interests/3-6 competencies. The logged-in user sees their seed selections already toggled on and can change them. This makes the demo feel populated from the start.                                                                     |
+| 9   | Profile header card               | **Show user info (name, role, service line)** from the auth session or a profile endpoint                                       | Matches design comp lines 251-257. Requires the backend to expose role/service-line in the profile response (or reuse data from the session).                                                                                                                          |
+| 10  | Backend response for user profile | **Extend `GET /api/auth/me`** or add **`GET /api/profile`** with full employee fields                                           | Plan adds a dedicated `GET /api/profile` endpoint returning name, role, serviceLine, office, initials — keeping auth endpoints thin.                                                                                                                                   |
+| 11  | Feature package naming            | **`catalog/` and `profile/`** instead of `interests/`                                                                           | AGENTS.md lists `interests/` as an example, but the catalog endpoint groups both interests _and_ competencies, so `catalog/` is a better semantic fit. `profile/` groups user-facing profile + selection endpoints.                                                    |
+| 12  | Automated tests                   | **Not included in this slice**                                                                                                  | The hackathon speed goal favours manual verification over test scaffolding. The backend has `spring-boot-starter-webmvc-test` available — an implementer may optionally add a `@WebMvcTest` for the controllers if time allows, but it is not required for acceptance. |
 
 ## Phases
 
@@ -315,4 +319,3 @@ Sequenced after F-01 (catalog tables + seed data exist) and S-01 (user can log i
 2. **Should saving be automatic on each toggle (auto-save) or require explicit "Save profile" click?** — Plan follows the design comp which shows an explicit "Save profile" button. Auto-save can be added later if UX testing suggests it. Non-blocking.
 3. **Should there be a minimum number of selections required before save?** — Plan says no enforcement in S-02 (Decision #4). S-03 can prompt the user to pick interests if their stack is empty. Non-blocking.
 4. **Should changes to selections recompute the candidate stack immediately?** — Out of scope for S-02. S-03 computes the stack when the user navigates to Discover. If S-05 (edit after setup) is built, it could trigger a re-rank. Non-blocking.
-

@@ -1,3 +1,5 @@
+> **Archived:** 2026-06-13 00:00 | Change ID: `employee-login` | Roadmap ID: `S-01`
+
 # Plan Brief: Employee login
 
 **Change ID:** `employee-login` | **Roadmap ID:** `S-01` | **Status:** revised
@@ -8,12 +10,12 @@ A polished, design-comp-accurate login page and authenticated app shell. The log
 
 ## Phases at a glance
 
-| # | Phase | Backend | Frontend | Key deliverable |
-|---|-------|---------|----------|-----------------|
-| 1 | Global styles & design tokens | — | ✓ | Figtree font loaded, CSS custom properties, global resets matching design comp |
-| 2 | Login page | — | ✓ | Real login form replacing F-02 placeholder — pixel-match to design comp |
-| 3 | App shell & authenticated landing | — | ✓ | Sticky header with nav tabs + avatar, welcome page, logout |
-| 4 | Polish & accessibility | — | ✓ | Autofocus, loading states, page titles, keyboard a11y, focus ring |
+| #   | Phase                             | Backend | Frontend | Key deliverable                                                                |
+| --- | --------------------------------- | ------- | -------- | ------------------------------------------------------------------------------ |
+| 1   | Global styles & design tokens     | —       | ✓        | Figtree font loaded, CSS custom properties, global resets matching design comp |
+| 2   | Login page                        | —       | ✓        | Real login form replacing F-02 placeholder — pixel-match to design comp        |
+| 3   | App shell & authenticated landing | —       | ✓        | Sticky header with nav tabs + avatar, welcome page, logout                     |
+| 4   | Polish & accessibility            | —       | ✓        | Autofocus, loading states, page titles, keyboard a11y, focus ring              |
 
 ## Key decisions
 
@@ -33,4 +35,3 @@ A polished, design-comp-accurate login page and authenticated app shell. The log
 ## Estimated effort
 
 **S (Small)** — Primarily frontend: one login page, one shell component, one welcome page, CSS modules and tokens. No backend work. All auth plumbing (API client, context, route guard) is already in place from F-02. Estimated at 2–3 hours of implementation.
-

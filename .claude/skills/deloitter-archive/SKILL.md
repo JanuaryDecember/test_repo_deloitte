@@ -15,10 +15,12 @@ Move a finished slice from active development (`context/changes/`) into the read
 ## Prerequisites (warn but do not block)
 
 Before archiving, check for the existence of:
+
 - `context/changes/<change-id>/review/plan-review.md`
 - `context/changes/<change-id>/review/impl-review-phase-*.md` (at least one)
 
 If any of these are missing, **warn the user** with a message like:
+
 > ⚠️ Implementation review files are missing for `<change-id>`. Archiving anyway — consider running `/deloitter-implement-review <change-id>` first.
 
 This is advisory only — the archive proceeds regardless.
@@ -63,11 +65,13 @@ This line goes at line 1 of each file, followed by a blank line, then the origin
 In the "At a glance" table, find the row where the Change ID column matches `<change-id>` and change its Status cell from `ready` or `proposed` to `done`.
 
 **Example before:**
+
 ```
 | F-01 | persistence-and-seed   | (foundation) Postgres wired + accounts/catalog seeded | — | Account provisioning, Data handling NFR | ready    |
 ```
 
 **Example after:**
+
 ```
 | F-01 | persistence-and-seed   | (foundation) Postgres wired + accounts/catalog seeded | — | Account provisioning, Data handling NFR | done     |
 ```
@@ -75,6 +79,7 @@ In the "At a glance" table, find the row where the Change ID column matches `<ch
 ### Step 4: Update `.github/roadmap-issues.json`
 
 Find the item in the `items` array where `"changeId"` equals `<change-id>` and set:
+
 - `"status": "done"`
 
 Leave all other fields unchanged.
@@ -82,20 +87,23 @@ Leave all other fields unchanged.
 ### Step 4b: Update `.github/roadmap-issues.psd1` (keep in sync)
 
 Find the item block in the `Items` array where `Id` matches the roadmap ID (e.g. `'F-01'`) and change:
+
 - `Status   = 'ready'` (or `'proposed'`) → `Status   = 'done'`
 
 This keeps the legacy PowerShell manifest in sync with the JSON source of truth.
 
-### Step 5: Update GitHub issue label (if gh available)
+### Step 5: Update GitHub issue label and close it (if gh available)
 
 If the `gh` CLI is authenticated and a repo can be resolved from `git remote get-url origin`:
 
 1. Find the issue by searching for the provenance marker: `<!-- roadmap-id: <ID> -->` (where `<ID>` is the roadmap ID from the manifest, e.g. `F-01`).
 2. Remove labels `status:ready` and `status:proposed` from the issue.
 3. Add label `status:done` to the issue.
+4. Close the issue as completed: `gh issue close <number> --reason completed`.
 
 If `gh` is not available or not authenticated, skip this step and inform the user:
-> ℹ️ gh CLI not available/authenticated — skipping GitHub label update. Run the deploy script to sync labels.
+
+> ℹ️ gh CLI not available/authenticated — skipping GitHub label update and issue close. Run the deploy script to sync labels.
 
 ### Step 6: Summary
 
@@ -107,6 +115,7 @@ Print a confirmation:
   - Roadmap status: done
   - Manifest status: done
   - GitHub label: status:done (or "skipped — gh not available")
+  - GitHub issue: closed as completed (or "skipped — gh not available")
 ```
 
 ## Error handling
@@ -117,7 +126,7 @@ Print a confirmation:
 
 ## What this skill does NOT do
 
-- Does not close the GitHub issue (only updates the label).
+- Does not reopen or modify already-closed GitHub issues.
 - Does not remove the change from the roadmap table (the row stays, marked `done`).
 - Does not modify any source code files.
 - Does not run tests or verification — that's `/deloitter-release-readiness`.

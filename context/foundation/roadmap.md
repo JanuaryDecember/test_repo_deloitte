@@ -38,25 +38,25 @@ because everything upstream only matters if the match reveal lands.
 
 ## At a glance
 
-| ID   | Change ID              | Outcome (user can …)                                              | Prerequisites    | PRD refs              | Status   |
-| ---- | ---------------------- | ----------------------------------------------------------------- | ---------------- | --------------------- | -------- |
-| F-01 | persistence-and-seed   | (foundation) Postgres wired + accounts/catalog seeded             | —                | Account provisioning, Data handling NFR | done     |
-| F-02 | auth-login-gate        | (foundation) email+password verified, authenticated session issued | F-01             | FR-001, Access Control | done     |
-| S-01 | employee-login         | log in with seeded credentials and reach the app                 | F-01, F-02       | FR-001                | proposed |
-| S-02 | select-interests       | pick interests & competencies that drive matching                | F-01, S-01       | FR-002                | proposed |
-| S-03 | swipe-candidate-stack  | swipe like/pass through a stack ranked by shared interests       | F-01, S-02       | FR-003, FR-004, Business Logic, Responsiveness NFR | proposed |
-| S-04 | mutual-match-reveal    | see mutual matches with revealed score + contact info            | S-03             | FR-005, FR-006, Privacy NFR | proposed |
-| S-05 | edit-interests         | edit interests/competencies after initial setup                  | S-02             | FR-007                | proposed |
+| ID   | Change ID             | Outcome (user can …)                                               | Prerequisites | PRD refs                                           | Status   |
+| ---- | --------------------- | ------------------------------------------------------------------ | ------------- | -------------------------------------------------- | -------- |
+| F-01 | persistence-and-seed  | (foundation) Postgres wired + accounts/catalog seeded              | —             | Account provisioning, Data handling NFR            | done     |
+| F-02 | auth-login-gate       | (foundation) email+password verified, authenticated session issued | F-01          | FR-001, Access Control                             | done     |
+| S-01 | employee-login        | log in with seeded credentials and reach the app                   | F-01, F-02    | FR-001                                             | done     |
+| S-02 | select-interests      | pick interests & competencies that drive matching                  | F-01, S-01    | FR-002                                             | done     |
+| S-03 | swipe-candidate-stack | swipe like/pass through a stack ranked by shared interests         | F-01, S-02    | FR-003, FR-004, Business Logic, Responsiveness NFR | done     |
+| S-04 | mutual-match-reveal   | see mutual matches with revealed score + contact info              | S-03          | FR-005, FR-006, Privacy NFR                        | done     |
+| S-05 | edit-interests        | edit interests/competencies after initial setup                    | S-02          | FR-007                                             | proposed |
 
 ## Streams
 
 Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
 
-| Stream | Theme                | Chain                          | Note                                                                 |
-| ------ | -------------------- | ------------------------------ | -------------------------------------------------------------------- |
-| A      | Onboarding & access  | `F-01` → `F-02` → `S-01`       | The gate: persistence, seeded accounts, and the login the whole app sits behind. |
-| B      | Match loop           | `S-02` → `S-03` → `S-04`       | The north-star path (joins Stream A at `S-01`); strict must-have spine under the speed goal. |
-| C      | Profile maintenance  | `S-05`                         | Nice-to-have edit; branches from `S-02` (Stream B), parallel with `S-03`/`S-04`. |
+| Stream | Theme               | Chain                    | Note                                                                                         |
+| ------ | ------------------- | ------------------------ | -------------------------------------------------------------------------------------------- |
+| A      | Onboarding & access | `F-01` → `F-02` → `S-01` | The gate: persistence, seeded accounts, and the login the whole app sits behind.             |
+| B      | Match loop          | `S-02` → `S-03` → `S-04` | The north-star path (joins Stream A at `S-01`); strict must-have spine under the speed goal. |
+| C      | Profile maintenance | `S-05`                   | Nice-to-have edit; branches from `S-02` (Stream B), parallel with `S-03`/`S-04`.             |
 
 ## Baseline
 
@@ -163,15 +163,15 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID              | Suggested issue title                                  | Ready for `/10x-plan` | Notes                                   |
-| ---------- | ---------------------- | ------------------------------------------------------ | --------------------- | --------------------------------------- |
-| F-01       | persistence-and-seed   | Wire Postgres + seed demo accounts and interest catalog | yes                   | Run `/10x-plan persistence-and-seed`    |
-| F-02       | auth-login-gate        | Email+password verification and authenticated session  | no                    | Needs F-01                              |
-| S-01       | employee-login         | Login screen for seeded employees                       | no                    | Needs F-01, F-02                        |
-| S-02       | select-interests       | Interest & competency selection from catalog            | no                    | Needs F-01, S-01                        |
-| S-03       | swipe-candidate-stack  | Ranked candidate stack with like/pass swipe             | no                    | Needs F-01, S-02; backend scoring focus |
-| S-04       | mutual-match-reveal    | Mutual match creation + Matches view with reveal        | no                    | North star; needs S-03; privacy guardrail |
-| S-05       | edit-interests         | Edit interests/competencies after setup                 | no                    | Nice-to-have; needs S-02                |
+| Roadmap ID | Change ID             | Suggested issue title                                   | Ready for `/10x-plan` | Notes                                     |
+| ---------- | --------------------- | ------------------------------------------------------- | --------------------- | ----------------------------------------- |
+| F-01       | persistence-and-seed  | Wire Postgres + seed demo accounts and interest catalog | yes                   | Run `/10x-plan persistence-and-seed`      |
+| F-02       | auth-login-gate       | Email+password verification and authenticated session   | no                    | Needs F-01                                |
+| S-01       | employee-login        | Login screen for seeded employees                       | no                    | Needs F-01, F-02                          |
+| S-02       | select-interests      | Interest & competency selection from catalog            | no                    | Needs F-01, S-01                          |
+| S-03       | swipe-candidate-stack | Ranked candidate stack with like/pass swipe             | no                    | Needs F-01, S-02; backend scoring focus   |
+| S-04       | mutual-match-reveal   | Mutual match creation + Matches view with reveal        | no                    | North star; needs S-03; privacy guardrail |
+| S-05       | edit-interests        | Edit interests/competencies after setup                 | no                    | Nice-to-have; needs S-02                  |
 
 ## Open Roadmap Questions
 

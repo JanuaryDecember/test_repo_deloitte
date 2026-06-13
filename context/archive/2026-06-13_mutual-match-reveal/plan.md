@@ -1,10 +1,14 @@
+> **Archived:** 2026-06-13 00:00 | Change ID: `mutual-match-reveal` | Roadmap ID: `S-04`
+
 ---
+
 change_id: "mutual-match-reveal"
 roadmap_id: "S-04"
 status: revised
 created: 2026-06-13
 prd_refs: [FR-005, FR-006, Privacy NFR]
 prerequisites: [S-03 swipe-candidate-stack]
+
 ---
 
 # Plan: Mutual match reveal
@@ -14,6 +18,7 @@ prerequisites: [S-03 swipe-candidate-stack]
 This slice delivers the north-star milestone: when two users have each liked the other, the system detects the mutual match and reveals the compatibility score plus contact info to both parties. The user sees a celebratory match overlay immediately upon swiping (with confetti, overlapping avatars, the score, a shared-attribute summary, and the colleague's Teams handle), and can later browse all their matches in a dedicated Matches view.
 
 Sequenced after S-03 because it consumes the like records that the swipe endpoint produces. This slice introduces:
+
 1. An `employee_match` persistence table (freezing the score at match time)
 2. Match-detection logic triggered inline when recording a like
 3. Extension of the swipe endpoint response to include match data when a mutual match occurs
@@ -22,11 +27,12 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 6. The Match overlay UI (shown immediately on mutual match)
 7. Match count badge in the navigation
 
-**Privacy guardrail (critical):** A user must never learn that someone liked or passed on them unless a mutual match exists. This plan enforces this at the API level — the swipe response only includes match data when *both* sides have `liked=true`; no endpoint ever exposes non-mutual intent.
+**Privacy guardrail (critical):** A user must never learn that someone liked or passed on them unless a mutual match exists. This plan enforces this at the API level — the swipe response only includes match data when _both_ sides have `liked=true`; no endpoint ever exposes non-mutual intent.
 
 **Assumes all prerequisites are fully implemented:** F-01 (Postgres + seed), F-02 (auth + session), S-01 (login UI + app shell), S-02 (interest/competency selection), S-03 (swipe persistence + stack endpoints + Discover page + gesture UI). Specifically assumes: `employee_swipe` table, `SwipeRepository`, `CompatibilityService`, `DiscoverService`, `DiscoverController`, `DiscoverPage` component, `AppShell` with nav tabs, React Router, AuthContext, API client with `fetchStack()` and `recordSwipe()`.
 
 **Design reference:** `frontend/context/foundation/design/Deloitter.dc.html`:
+
 - Match overlay: lines 283–316 (confetti, avatars, score, share summary, Teams CTA, buttons)
 - Matches list view: lines 200–246 (grid cards with avatar, name, role, score badge, shared interests, Teams handle, "Message on Teams" button)
 - Empty matches state: lines 206–212 (💚 emoji, "No matches yet" message, "Start swiping" CTA)
@@ -34,20 +40,20 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 ## Decisions & Assumptions
 
-| # | Decision | Choice | Rationale |
-|---|----------|--------|-----------|
-| 1 | Match detection trigger | **Inline in swipe endpoint** — when a `liked=true` swipe is recorded, immediately check if the reverse (`candidate → me`, `liked=true`) exists | Simplest for POC. No async/event needed at pilot scale. Guarantees the match overlay appears on the same response as the swipe. |
-| 2 | Match table design | **Single row per matched pair:** `employee_match(id, employee_1_id, employee_2_id, score, created_at)` where `employee_1_id < employee_2_id` (canonical ordering) | Prevents duplicate match rows. Single source of truth. Both users query the same row. Named `employee_match` (not `match`) to avoid SQL reserved-word issues and to be consistent with `employee_swipe`. |
-| 3 | Score persistence | **Frozen at match time** — the compatibility score is computed at the moment both likes exist and stored in the `match` row | If a user later edits interests (S-05), the historical match retains the score from when they connected. This is more natural ("you matched because of what you shared *then*"). |
-| 4 | Swipe response extension | **Extend `POST /api/discover/swipe` response** from `{ success }` to `{ success, match?: MatchResult }` where `MatchResult` contains score, name, initials, contactInfo, sharedInterests, sharedCompetencies, shareSummary | Allows the frontend to show the match overlay immediately without an extra round-trip. `match` field is `null` when no mutual match occurred. |
-| 5 | Matches list endpoint | **`GET /api/matches`** returning `List<MatchItem>` — each item: id, matchedEmployee (name, initials, roleFamily, serviceLine, contactInfo), score, sharedInterests, sharedCompetencies | Serves the Matches page. Scoped to the authenticated user only — privacy enforced by query. |
-| 6 | Privacy enforcement | **Query-level:** the matches endpoint joins on `(employee_1_id = me OR employee_2_id = me)` — a user can only see their own matches. No endpoint exposes pending likes or another user's swipe history. | Structural guarantee. |
-| 7 | Frontend match overlay | **Shown inline on swipe response** — when `recordSwipe()` returns a non-null `match` field, the overlay renders with confetti, avatars, score, and CTA | Fire-and-forget for the swipe *unless* a match occurs — then the response is awaited for match data. Implementation: always await the response, but don't block the card animation (start animation immediately, show overlay after response arrives). |
-| 8 | Confetti animation | **CSS-only** confetti matching the design comp (18 pieces, `dl-confetti` keyframe: translate Y + rotate, staggered delays) | No external library needed. Lightweight, matches the reference exactly. |
-| 9 | Match count in nav | **Fetched as part of initial data load** (e.g., from `/api/matches` response length) and updated in-memory when a new match occurs inline | Avoids a separate count endpoint. The badge updates immediately when a match overlay is shown. |
-| 10 | Package naming | **`match/`** for backend feature package | Groups match controller, service, DTOs, entity, repository. Follows AGENTS.md convention. |
-| 11 | Automated tests | **Not required** — hackathon speed goal | Manual verification via seeded mutual-like scenario suffices. |
-| 12 | Seed data for verification | **Two seeded mutual-like pairs** — seed `employee_swipe` rows so that when Alice likes Ben (who already liked Alice), a match triggers immediately on the first swipe | Enables instant demo of the match flow without having to log in as two users manually first. |
+| #   | Decision                   | Choice                                                                                                                                                                                                                     | Rationale                                                                                                                                                                                                                                              |
+| --- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | Match detection trigger    | **Inline in swipe endpoint** — when a `liked=true` swipe is recorded, immediately check if the reverse (`candidate → me`, `liked=true`) exists                                                                             | Simplest for POC. No async/event needed at pilot scale. Guarantees the match overlay appears on the same response as the swipe.                                                                                                                        |
+| 2   | Match table design         | **Single row per matched pair:** `employee_match(id, employee_1_id, employee_2_id, score, created_at)` where `employee_1_id < employee_2_id` (canonical ordering)                                                          | Prevents duplicate match rows. Single source of truth. Both users query the same row. Named `employee_match` (not `match`) to avoid SQL reserved-word issues and to be consistent with `employee_swipe`.                                               |
+| 3   | Score persistence          | **Frozen at match time** — the compatibility score is computed at the moment both likes exist and stored in the `match` row                                                                                                | If a user later edits interests (S-05), the historical match retains the score from when they connected. This is more natural ("you matched because of what you shared _then_").                                                                       |
+| 4   | Swipe response extension   | **Extend `POST /api/discover/swipe` response** from `{ success }` to `{ success, match?: MatchResult }` where `MatchResult` contains score, name, initials, contactInfo, sharedInterests, sharedCompetencies, shareSummary | Allows the frontend to show the match overlay immediately without an extra round-trip. `match` field is `null` when no mutual match occurred.                                                                                                          |
+| 5   | Matches list endpoint      | **`GET /api/matches`** returning `List<MatchItem>` — each item: id, matchedEmployee (name, initials, roleFamily, serviceLine, contactInfo), score, sharedInterests, sharedCompetencies                                     | Serves the Matches page. Scoped to the authenticated user only — privacy enforced by query.                                                                                                                                                            |
+| 6   | Privacy enforcement        | **Query-level:** the matches endpoint joins on `(employee_1_id = me OR employee_2_id = me)` — a user can only see their own matches. No endpoint exposes pending likes or another user's swipe history.                    | Structural guarantee.                                                                                                                                                                                                                                  |
+| 7   | Frontend match overlay     | **Shown inline on swipe response** — when `recordSwipe()` returns a non-null `match` field, the overlay renders with confetti, avatars, score, and CTA                                                                     | Fire-and-forget for the swipe _unless_ a match occurs — then the response is awaited for match data. Implementation: always await the response, but don't block the card animation (start animation immediately, show overlay after response arrives). |
+| 8   | Confetti animation         | **CSS-only** confetti matching the design comp (18 pieces, `dl-confetti` keyframe: translate Y + rotate, staggered delays)                                                                                                 | No external library needed. Lightweight, matches the reference exactly.                                                                                                                                                                                |
+| 9   | Match count in nav         | **Fetched as part of initial data load** (e.g., from `/api/matches` response length) and updated in-memory when a new match occurs inline                                                                                  | Avoids a separate count endpoint. The badge updates immediately when a match overlay is shown.                                                                                                                                                         |
+| 10  | Package naming             | **`match/`** for backend feature package                                                                                                                                                                                   | Groups match controller, service, DTOs, entity, repository. Follows AGENTS.md convention.                                                                                                                                                              |
+| 11  | Automated tests            | **Not required** — hackathon speed goal                                                                                                                                                                                    | Manual verification via seeded mutual-like scenario suffices.                                                                                                                                                                                          |
+| 12  | Seed data for verification | **Two seeded mutual-like pairs** — seed `employee_swipe` rows so that when Alice likes Ben (who already liked Alice), a match triggers immediately on the first swipe                                                      | Enables instant demo of the match flow without having to log in as two users manually first.                                                                                                                                                           |
 
 ## Phases
 
@@ -118,7 +124,7 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
     7. Return `Optional.of(matchResult)`
   - Method: `List<MatchItem> getMatches(Employee me)`:
     1. Query `MatchRepository.findByEmployeeId(me.id)`
-    2. For each match, resolve the *other* employee (the one whose ID ≠ me.id)
+    2. For each match, resolve the _other_ employee (the one whose ID ≠ me.id)
     3. Compute shared interests/competencies between me and the matched employee (re-compute from current selections — or use frozen? Decision: use **current** shared attributes for display, but keep the frozen score)
     4. Map to `MatchItem` DTOs
     5. Sort by `createdAt` descending (most recent first)
@@ -173,6 +179,7 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 
 - [x] Create `backend/src/main/resources/db/migration/V8__seed_mutual_likes.sql`:
   - Insert swipe rows where 3–4 employees have "already liked" Alice:
+
     ```sql
     -- Ben likes Alice (when Alice likes Ben back → instant match demo)
     INSERT INTO employee_swipe (swiper_id, candidate_id, liked, created_at)
@@ -202,6 +209,7 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
     WHERE d.email = 'daniel.kim@deloitte.demo'
       AND a.email = 'alice.chen@deloitte.demo';
     ```
+
   - This means when Alice swipes right on Ben/Chloe/Emily/Daniel, she instantly gets a match overlay
   - Also seed Alice liking some employees so other demo users get matches:
     ```sql
@@ -457,4 +465,3 @@ Sequenced after S-03 because it consumes the like records that the swipe endpoin
 2. **Should there be a notification/sound on match?** — Design comp shows confetti but no audio. Plan excludes audio (non-goal for hackathon). Non-blocking.
 3. **What if both users swipe each other simultaneously (race condition)?** — At pilot scale with 20 seeded users, this is nearly impossible. The `UNIQUE (employee_1_id, employee_2_id)` constraint on `employee_match` prevents duplicate match rows. If a duplicate insert occurs, catch the `DataIntegrityViolationException` and return the existing match. Non-blocking.
 4. **Should the overlay wait for the API response or show optimistically?** — Plan says: start the card fly-off animation immediately (fire-and-forget feel), but await the response before deciding whether to show the overlay. The ~300ms fly-off animation covers the round-trip. If the response is slow (> 500ms), the overlay will appear after a brief pause — acceptable for POC. Non-blocking.
-

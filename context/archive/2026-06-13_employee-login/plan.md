@@ -1,10 +1,14 @@
+> **Archived:** 2026-06-13 00:00 | Change ID: `employee-login` | Roadmap ID: `S-01`
+
 ---
+
 change_id: "employee-login"
 roadmap_id: "S-01"
 status: revised
 created: 2026-06-13
 prd_refs: [FR-001]
 prerequisites: [F-01 persistence-and-seed, F-02 auth-login-gate]
+
 ---
 
 # Plan: Employee login
@@ -21,40 +25,40 @@ Sequenced after F-01 and F-02 because it depends on seeded accounts in Postgres 
 
 ## Decisions & Assumptions
 
-| # | Decision | Choice | Rationale |
-|---|----------|--------|-----------|
-| 1 | Font | **Figtree** (Google Fonts, weights 400–900) | Matches design comp exactly. Loaded via `<link>` in `index.html`. |
-| 2 | Color system | **oklch palette from design comp** | Primary green `oklch(0.70 0.16 145)`, page bg `oklch(0.985 0.012 135)`, dark text `oklch(0.26 0.03 152)`, muted text `oklch(0.53 0.02 152)` etc. All values taken directly from the HTML mock. |
-| 3 | Component library | **None — hand-written CSS** | The design is bespoke with oklch colors and specific radii. A component library would fight the design. Speed goal favors matching the comp directly. |
-| 4 | CSS approach | **CSS modules** | Scoped styles, zero-config in Vite, no global pollution. One module per page/component. |
-| 5 | Layout | **Design comp login layout** | Centered card (400px, border-radius 28px), decorative blurred background circles, inputs with 13px border-radius, full-width green CTA button with shadow. |
-| 6 | Post-login landing | **App shell with nav header** (from design comp) | The design shows a 72px sticky header with logo, nav tabs (Discover, Matches, Profile), and user avatar. S-01 delivers the shell; tab content comes in later slices. |
-| 7 | Form handling | **Controlled inputs with React state** | No form library needed for two fields. |
-| 8 | Error feedback | **Inline error message below the form** | Styled red/error color, consistent with design card padding. |
-| 9 | Accessibility | **Standard form semantics** | `<form>`, `<label>`, `type="email"`, `type="password"`, `aria-invalid`, `role="alert"`. |
-| 10 | Global styles | **Reset + Figtree applied in `index.css`** | The design specifies `*{box-sizing:border-box}`, no margin/padding on html/body, Figtree as the base family with antialiased rendering. |
-| 11 | oklch color space | **Conscious choice — modern browsers only** | oklch() is supported in Chrome 111+, Firefox 113+, Safari 15.4+. Acceptable for this hackathon demo targeting modern desktop browsers (PRD non-goal: no legacy browser support). |
+| #   | Decision           | Choice                                           | Rationale                                                                                                                                                                                      |
+| --- | ------------------ | ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Font               | **Figtree** (Google Fonts, weights 400–900)      | Matches design comp exactly. Loaded via `<link>` in `index.html`.                                                                                                                              |
+| 2   | Color system       | **oklch palette from design comp**               | Primary green `oklch(0.70 0.16 145)`, page bg `oklch(0.985 0.012 135)`, dark text `oklch(0.26 0.03 152)`, muted text `oklch(0.53 0.02 152)` etc. All values taken directly from the HTML mock. |
+| 3   | Component library  | **None — hand-written CSS**                      | The design is bespoke with oklch colors and specific radii. A component library would fight the design. Speed goal favors matching the comp directly.                                          |
+| 4   | CSS approach       | **CSS modules**                                  | Scoped styles, zero-config in Vite, no global pollution. One module per page/component.                                                                                                        |
+| 5   | Layout             | **Design comp login layout**                     | Centered card (400px, border-radius 28px), decorative blurred background circles, inputs with 13px border-radius, full-width green CTA button with shadow.                                     |
+| 6   | Post-login landing | **App shell with nav header** (from design comp) | The design shows a 72px sticky header with logo, nav tabs (Discover, Matches, Profile), and user avatar. S-01 delivers the shell; tab content comes in later slices.                           |
+| 7   | Form handling      | **Controlled inputs with React state**           | No form library needed for two fields.                                                                                                                                                         |
+| 8   | Error feedback     | **Inline error message below the form**          | Styled red/error color, consistent with design card padding.                                                                                                                                   |
+| 9   | Accessibility      | **Standard form semantics**                      | `<form>`, `<label>`, `type="email"`, `type="password"`, `aria-invalid`, `role="alert"`.                                                                                                        |
+| 10  | Global styles      | **Reset + Figtree applied in `index.css`**       | The design specifies `*{box-sizing:border-box}`, no margin/padding on html/body, Figtree as the base family with antialiased rendering.                                                        |
+| 11  | oklch color space  | **Conscious choice — modern browsers only**      | oklch() is supported in Chrome 111+, Firefox 113+, Safari 15.4+. Acceptable for this hackathon demo targeting modern desktop browsers (PRD non-goal: no legacy browser support).               |
 
 ## Design Tokens (from `Deloitter.dc.html`)
 
 Referenced throughout the plan. Implementation should extract these into a shared CSS custom properties file or at minimum use them consistently:
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--dl-green` | `oklch(0.70 0.16 145)` | Primary button, logo bg, accents |
-| `--dl-bg` | `oklch(0.985 0.012 135)` | Page background |
-| `--dl-text` | `oklch(0.26 0.03 152)` | Primary text |
-| `--dl-text-muted` | `oklch(0.53 0.02 152)` | Secondary text |
-| `--dl-text-label` | `oklch(0.42 0.02 152)` | Form labels |
-| `--dl-card-border` | `oklch(0.91 0.012 150)` | Card borders |
-| `--dl-input-border` | `oklch(0.89 0.012 150)` | Input borders |
-| `--dl-input-bg` | `oklch(0.985 0.008 145)` | Input background |
-| `--dl-card-shadow` | `0 24px 60px -28px oklch(0.4 0.05 150 / .45)` | Card elevation |
-| `--dl-btn-shadow` | `0 12px 26px -12px oklch(0.70 0.16 145 / .9)` | Primary button shadow |
-| `--dl-radius-card` | `28px` | Card border-radius |
-| `--dl-radius-input` | `13px` | Input border-radius |
-| `--dl-radius-btn` | `14px` | Button border-radius |
-| `--dl-font` | `'Figtree', system-ui, -apple-system, sans-serif` | Base font-family |
+| Token               | Value                                             | Usage                            |
+| ------------------- | ------------------------------------------------- | -------------------------------- |
+| `--dl-green`        | `oklch(0.70 0.16 145)`                            | Primary button, logo bg, accents |
+| `--dl-bg`           | `oklch(0.985 0.012 135)`                          | Page background                  |
+| `--dl-text`         | `oklch(0.26 0.03 152)`                            | Primary text                     |
+| `--dl-text-muted`   | `oklch(0.53 0.02 152)`                            | Secondary text                   |
+| `--dl-text-label`   | `oklch(0.42 0.02 152)`                            | Form labels                      |
+| `--dl-card-border`  | `oklch(0.91 0.012 150)`                           | Card borders                     |
+| `--dl-input-border` | `oklch(0.89 0.012 150)`                           | Input borders                    |
+| `--dl-input-bg`     | `oklch(0.985 0.008 145)`                          | Input background                 |
+| `--dl-card-shadow`  | `0 24px 60px -28px oklch(0.4 0.05 150 / .45)`     | Card elevation                   |
+| `--dl-btn-shadow`   | `0 12px 26px -12px oklch(0.70 0.16 145 / .9)`     | Primary button shadow            |
+| `--dl-radius-card`  | `28px`                                            | Card border-radius               |
+| `--dl-radius-input` | `13px`                                            | Input border-radius              |
+| `--dl-radius-btn`   | `14px`                                            | Button border-radius             |
+| `--dl-font`         | `'Figtree', system-ui, -apple-system, sans-serif` | Base font-family                 |
 
 ## Phases
 
@@ -281,4 +285,3 @@ Referenced throughout the plan. Implementation should extract these into a share
 1. **Figtree font — self-host or Google Fonts CDN?** — Plan uses Google Fonts CDN (fastest for a hackathon POC). If offline/self-hosted is needed, download and serve from `public/fonts/`. Non-blocking.
 2. **Exact seeded employee emails for demo?** — Plan assumes F-01 seeds employees like `alice.johnson@deloitte.demo`. Verification steps use these. If seed data uses different emails, adjust accordingly. Non-blocking.
 3. **Nav tab routing for Discover/Matches/Profile?** — S-01 renders the tabs in the header but they are non-functional placeholders (no click routing). S-02+ will wire them to real routes. Non-blocking.
-
