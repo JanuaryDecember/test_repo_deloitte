@@ -1,20 +1,175 @@
+/* ProfilePage — interests & competencies selection UI
+   Matches design comp lines 249–277 */
+
 .page {
-  max-width: 560px;
-  margin: 40px auto;
-  padding: 0 20px;
+  padding: 24px 0 60px;
+  max-width: 680px;
 }
 
-.title {
-  font-size: 22px;
+/* ---- User header card ---- */
+.headerCard {
+  background: #fff;
+  border: 1px solid oklch(0.91 0.012 150);
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 14px 34px -28px oklch(0.4 0.05 150 / 0.5);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--dl-green);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.userName {
+  font-size: 21px;
   font-weight: 800;
-  letter-spacing: -0.02em;
-  color: oklch(0.20 0.02 152);
-  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--dl-text);
 }
 
-.subtitle {
-  font-size: 14.5px;
+.userMeta {
+  font-size: 14px;
   color: oklch(0.55 0.02 152);
+  font-weight: 600;
   margin: 0;
 }
 
+/* ---- Section layout ---- */
+.section {
+  margin-bottom: 30px;
+}
+
+.sectionHeading {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0 0 5px;
+  color: var(--dl-text);
+}
+
+.sectionSubtitle {
+  font-size: 13.5px;
+  color: oklch(0.55 0.02 152);
+  margin: 0 0 14px;
+}
+
+/* ---- Chips ---- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.chip {
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 9px 15px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.12s;
+  white-space: nowrap;
+  background: #fff;
+  color: oklch(0.42 0.02 152);
+  border: 1.5px solid oklch(0.88 0.02 150);
+}
+
+.chip:hover {
+  filter: brightness(0.97);
+  transform: scale(1.03);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--dl-green);
+  outline-offset: 2px;
+}
+
+.chipSelected {
+  background: oklch(0.70 0.16 145);
+  color: #fff;
+  border: 1.5px solid oklch(0.70 0.16 145);
+}
+
+.chipSelected:hover {
+  filter: brightness(1.05);
+  transform: scale(1.03);
+}
+
+/* ---- Save button ---- */
+.saveBtn {
+  border: none;
+  background: oklch(0.70 0.16 145);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  padding: 14px 28px;
+  border-radius: 14px;
+  box-shadow: 0 12px 26px -14px oklch(0.70 0.16 145 / 0.9);
+  cursor: pointer;
+  transition: opacity 0.12s;
+}
+
+.saveBtn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.saveBtn:focus-visible {
+  outline: 2px solid var(--dl-green);
+  outline-offset: 2px;
+}
+
+.saveBtn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* ---- Loading / error ---- */
+.loading {
+  font-size: 15px;
+  color: oklch(0.55 0.02 152);
+  padding: 20px 0;
+}
+
+.error {
+  font-size: 15px;
+  color: oklch(0.50 0.15 25);
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.retryBtn {
+  border: 1.5px solid oklch(0.88 0.02 150);
+  background: transparent;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--dl-text);
+  transition: background 0.12s;
+}
+
+.retryBtn:hover {
+  background: oklch(0.96 0.012 150);
+}

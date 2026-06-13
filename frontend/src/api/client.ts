@@ -1,5 +1,11 @@
 import type { AuthUser } from '../types/auth';
 import type { CandidateCard, SwipeRequest, SwipeResponse } from '../types/discover';
+import type {
+  CatalogResponse,
+  UserProfile,
+  SelectionsResponse,
+  SelectionsRequest,
+} from '../types/profile';
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? '';
 
@@ -48,5 +54,28 @@ export async function recordSwipe(req: SwipeRequest): Promise<SwipeResponse> {
     body: JSON.stringify(req),
   });
   return res.json() as Promise<SwipeResponse>;
+}
+
+export async function fetchCatalog(): Promise<CatalogResponse> {
+  const res = await apiFetch('/api/catalog');
+  return res.json() as Promise<CatalogResponse>;
+}
+
+export async function fetchProfile(): Promise<UserProfile> {
+  const res = await apiFetch('/api/profile');
+  return res.json() as Promise<UserProfile>;
+}
+
+export async function fetchSelections(): Promise<SelectionsResponse> {
+  const res = await apiFetch('/api/profile/selections');
+  return res.json() as Promise<SelectionsResponse>;
+}
+
+export async function updateSelections(req: SelectionsRequest): Promise<SelectionsResponse> {
+  const res = await apiFetch('/api/profile/selections', {
+    method: 'PUT',
+    body: JSON.stringify(req),
+  });
+  return res.json() as Promise<SelectionsResponse>;
 }
 
