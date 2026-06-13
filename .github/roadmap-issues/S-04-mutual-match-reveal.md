@@ -1,7 +1,7 @@
 ## S-04 · `mutual-match-reveal`
 
 > Auto-generated from `context/foundation/roadmap.md` (v1).
-> The roadmap is the source of truth - edit it, update `.github/roadmap-issues.psd1`, then re-run the deploy.
+> The roadmap is the source of truth - edit it, update `.github/roadmap-issues.json`, then re-run the deploy.
 
 **Outcome:** When two users have liked each other the system creates a match, and the user can open a Matches view listing each match with its (now revealed) compatibility score and the matched colleague's contact info, so connection continues over Teams/email.
 
@@ -13,7 +13,7 @@
 | Status | proposed |
 
 ### Dependencies
-- **Blocked by:** #6
+- **Blocked by:** `S-03`
 - **Blocks:** none
 - **Parallel with:** `S-05`
 
@@ -28,5 +28,4 @@ The north star and second backend-investment focus. Introduces match detection a
 ### Next step
 Run `/10x-plan mutual-match-reveal` -> produces `context/changes/mutual-match-reveal/plan.md`.
 
-<!-- roadmap-id: S-04 | change-id: mutual-match-reveal | managed-by: deploy-roadmap-issues.ps1 -->
-
+<!-- roadmap-id: S-04 | change-id: mutual-match-reveal | managed-by: deploy-roadmap-issues.sh -->

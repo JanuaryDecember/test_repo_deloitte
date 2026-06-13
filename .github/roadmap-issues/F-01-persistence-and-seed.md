@@ -1,7 +1,7 @@
 ## F-01 · `persistence-and-seed`
 
 > Auto-generated from `context/foundation/roadmap.md` (v1).
-> The roadmap is the source of truth - edit it, update `.github/roadmap-issues.psd1`, then re-run the deploy.
+> The roadmap is the source of truth - edit it, update `.github/roadmap-issues.json`, then re-run the deploy.
 
 **Outcome:** PostgreSQL is connected to the Spring Boot backend, the minimal schema for employee accounts and the predefined interests/competencies catalog exists, and a seed harness populates enough demo employees that mutual matches can occur.
 
@@ -14,7 +14,7 @@
 
 ### Dependencies
 - **Blocked by:** none
-- **Blocks:** #3, #4, #5, #6
+- **Blocks:** `F-02`, `S-01`, `S-02`, `S-03`
 - **Parallel with:** none
 
 ### Why / risk
@@ -28,5 +28,4 @@ Sequenced first because nothing else is plannable or verifiable without persiste
 ### Next step
 Run `/10x-plan persistence-and-seed` -> produces `context/changes/persistence-and-seed/plan.md`.
 
-<!-- roadmap-id: F-01 | change-id: persistence-and-seed | managed-by: deploy-roadmap-issues.ps1 -->
-
+<!-- roadmap-id: F-01 | change-id: persistence-and-seed | managed-by: deploy-roadmap-issues.sh -->

@@ -1,7 +1,7 @@
 ## F-02 · `auth-login-gate`
 
 > Auto-generated from `context/foundation/roadmap.md` (v1).
-> The roadmap is the source of truth - edit it, update `.github/roadmap-issues.psd1`, then re-run the deploy.
+> The roadmap is the source of truth - edit it, update `.github/roadmap-issues.json`, then re-run the deploy.
 
 **Outcome:** email+password credentials are verified against seeded accounts, an authenticated session/token is issued, and a route-level guard ensures only an authenticated "me" can use the app (no anonymous browsing).
 
@@ -13,8 +13,8 @@
 | Status | proposed |
 
 ### Dependencies
-- **Blocked by:** #2
-- **Blocks:** #4
+- **Blocked by:** `F-01`
+- **Blocks:** `S-01`
 - **Parallel with:** none
 
 ### Why / risk
@@ -28,5 +28,4 @@ Deliberately thin - seeded credentials, no security/PII hardening (explicit Non-
 ### Next step
 Run `/10x-plan auth-login-gate` -> produces `context/changes/auth-login-gate/plan.md`.
 
-<!-- roadmap-id: F-02 | change-id: auth-login-gate | managed-by: deploy-roadmap-issues.ps1 -->
-
+<!-- roadmap-id: F-02 | change-id: auth-login-gate | managed-by: deploy-roadmap-issues.sh -->
