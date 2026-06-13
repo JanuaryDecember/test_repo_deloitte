@@ -150,16 +150,16 @@ Referenced throughout the plan. Implementation should extract these into a share
 
 - [x] `npm run build` succeeds
 - [x] `npm run lint` passes
-- [ ] `npm run dev` — visiting `/login`:
+- [x] `npm run dev` — visiting `/login`:
   - Decorative background circles visible
   - Centered white card with logo, heading, subtext
   - Email + password inputs styled per design
   - Green "Log in" button with shadow
   - Footer text about pre-seeded accounts
-- [ ] Submit empty form → browser validation prevents (required attribute)
-- [ ] Submit invalid credentials → inline "Invalid email or password" error
-- [ ] Submit valid credentials → navigates to authenticated area
-- [ ] Visit `/login` while authenticated → redirects to `/`
+- [x] Submit empty form → browser validation prevents (required attribute)
+- [x] Submit invalid credentials → inline "Invalid email or password" error
+- [x] Submit valid credentials → navigates to authenticated area
+- [x] Visit `/login` while authenticated → redirects to `/`
 
 ---
 

@@ -58,7 +58,7 @@ export function LoginPage() {
         </p>
 
         {/* Form */}
-        <form className={styles.form} onSubmit={handleSubmit} noValidate>
+        <form className={styles.form} onSubmit={handleSubmit}>
           <label htmlFor="email" className={styles.label}>Work email</label>
           <input
             id="email"
